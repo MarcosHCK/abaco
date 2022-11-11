@@ -18,21 +18,16 @@
 
 namespace Abaco
 {
-  public static int main (string[] args)
+  internal class Parser : GLib.Object
   {
-    try
+    /* public API */
+
+    public void scan (Tokens tokens, string source) throws GLib.Error
     {
-      var file = GLib.File.new_for_path ("/home/marcos/Desktop/sample.abc");
-      var stream = file.read ();
-      var compiler = new Compiler ();
-        compiler.feed_source (stream, file.get_basename ());
-        compiler.scan_sources ();
-        compiler.parse_sources ();
     }
-    catch (GLib.Error e)
+
+    public void parse (Tokens tokens, string source) throws GLib.Error
     {
-      error (@"$(e.domain):$(e.code):$(e.message)");
     }
-  return 0;
   }
 }

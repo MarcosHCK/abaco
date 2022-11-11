@@ -20,15 +20,59 @@ namespace Abaco
 {
   public class Compiler : GLib.Object
   {
-    private Lexer lexer { get; private set; }
+    private Lexer lexer { get; set; }
+    private Parser parser { get; set; }
+    private List<Source?> sources;
+    private Stage stage;
+
+    /* type API */
+
+    enum Stage
+    {
+      INVALID = -1,
+      FEED,     /* Source are being fed into compiler */
+      SCAN,     /* All sources are being scaned for declaration  */
+      PARSE,    /* All sources are being parsed to construct a program tree */
+      COMPILE,  /* Program tree is being compiled into intermediate code */
+      OPTIMIZE, /* Intermediate code is being optimized */
+    }
+
+    struct Source
+    {
+      public Tokens tokens;
+      public string name;
+
+      /* constructors */
+
+      public Source (Tokens tokens, string name)
+      {
+        this.tokens = tokens;
+        this.name = name;
+      }
+    }
+
+    /* private API */
+
+    private bool checkstage (Stage expected, Stage previous)
+    {
+      if (stage == previous)
+        stage = expected;
+      else
+      if (stage != expected)
+        return false;
+    return true;
+    }
 
     /* public API */
 
     public void feed_source (GLib.InputStream istream, string name, GLib.Cancellable? cancellable = null) throws GLib.Error
+      requires (checkstage (Stage.FEED, Stage.INVALID))
     {
       var stream = new GLib.DataInputStream (istream);
+        stream.byte_order = DataStreamByteOrder.HOST_ENDIAN;
         stream.newline_type = DataStreamNewlineType.ANY;
       var tokens = lexer.tokenize (stream, cancellable);
+        sources.append (Source (tokens, name));
 
       unowned var array = tokens.tokens;
       foreach (unowned var token in array)
@@ -37,11 +81,32 @@ namespace Abaco
       }
     }
 
+    public void scan_sources () throws GLib.Error
+      requires (checkstage (Stage.SCAN, Stage.FEED))
+    {
+      foreach (unowned var source in sources)
+      {
+        parser.scan (source.tokens, source.name);
+      }
+    }
+
+    public void parse_sources () throws GLib.Error
+      requires (checkstage (Stage.PARSE, Stage.SCAN))
+    {
+      foreach (unowned var source in sources)
+      {
+        parser.parse (source.tokens, source.name);
+      }
+    }
+
     /* constructor */
 
     public Compiler ()
     {
       lexer = new Lexer ();
+      parser = new Parser ();
+      sources = new List<Source> ();
+      stage = Stage.FEED;
     }
   }
 }

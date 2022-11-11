@@ -37,6 +37,7 @@ pkginclude_HEADERS=\
 libabaco_la_SOURCES=\
   compiler.vala \
   lexer.vala \
+  parser.vala \
   token.vala \
   tokens.vala \
   $(VOID)

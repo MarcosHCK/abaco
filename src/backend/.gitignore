@@ -32,5 +32,6 @@ libabaco.h
 
 compiler.c
 lexer.c
+parser.c
 token.c
 tokens.c
