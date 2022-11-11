@@ -36,6 +36,7 @@ pkginclude_HEADERS=\
 
 libabaco_la_SOURCES=\
   ast/concrete.vala \
+  ast/constant.vala \
   ast/list.vala \
   ast/named.vala \
   ast/node.vala \

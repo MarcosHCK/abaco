@@ -31,6 +31,7 @@ libabaco.h
 .dirstamp
 
 ast/concrete.c
+ast/constant.c
 ast/list.c
 ast/named.c
 ast/node.c
