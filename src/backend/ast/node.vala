@@ -18,7 +18,7 @@
 
 namespace Abaco.Ast
 {
-  public abstract class Node
+  internal abstract class Node
   {
     private Datalist<string?> notes;
 

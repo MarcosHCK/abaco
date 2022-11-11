@@ -15,29 +15,10 @@
  * along with abaco. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-using Abaco.Ast;
 
-namespace Abaco
+namespace Abaco.Ast
 {
-  internal class Parser : GLib.Object
+  internal interface Concrete : Node
   {
-    private UniqueCount uniques;
-
-    /* public API */
-
-    public void scan (Tokens tokens, string source) throws GLib.Error
-    {
-    }
-
-    public void parse (Tokens tokens, string source) throws GLib.Error
-    {
-    }
-
-    /* constructors */
-
-    public Parser ()
-    {
-      uniques = UniqueCount (0);
-    }
   }
 }

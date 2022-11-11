@@ -30,7 +30,12 @@ libabaco.vapi
 libabaco.h
 .dirstamp
 
+ast/concrete.c
+ast/named.c
 ast/node.c
+ast/rvalue.c
+ast/typed.c
+ast/unique.c
 compiler.c
 lexer.c
 parser.c
