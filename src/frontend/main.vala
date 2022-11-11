@@ -15,11 +15,22 @@
  * along with abaco. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include <cstdio>
 
-int
-main ()
+namespace Abaco
 {
-  printf ("Hello World!");
+  public static int main (string[] args)
+  {
+    try
+    {
+      var file = GLib.File.new_for_path ("/home/marcos/Desktop/sample.abc");
+      var stream = file.read ();
+      var compiler = new Compiler ();
+        compiler.feed_source (stream, file.get_basename ());
+    }
+    catch (GLib.Error e)
+    {
+      error (@"$(e.domain):$(e.code):$(e.message)");
+    }
   return 0;
+  }
 }

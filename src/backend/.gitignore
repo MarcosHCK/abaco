@@ -26,4 +26,11 @@
 libabaco*.so*
 libabaco*.dll*
 libabaco*.dylib*
+libabaco.vapi
+libabaco.h
 .dirstamp
+
+compiler.c
+lexer.c
+token.c
+tokens.c

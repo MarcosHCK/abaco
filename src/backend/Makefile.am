@@ -35,15 +35,42 @@ pkginclude_HEADERS=\
 #
 
 libabaco_la_SOURCES=\
+  compiler.vala \
+  lexer.vala \
+  token.vala \
+  tokens.vala \
   $(VOID)
-libabaco_la_CPPFLAGS=\
+libabaco_la_CFLAGS=\
+  $(GIO_CFLAGS) \
+  $(GLIB_CFLAGS) \
+  $(GOBJECT_CFLAGS) \
   $(LLVM_CFLAGS) \
   -D__LIBABACO_INSIDE__=1 \
   $(VOID)
 libabaco_la_LIBADD=\
+  $(GIO_LIBS) \
+  $(GLIB_LIBS) \
+  $(GOBJECT_LIBS) \
   $(LLVM_LIBS) \
   $(VOID)
 libabaco_la_LDFLAGS=\
   -rpath ${pkglibdir} \
   -version-info 0:0:0 \
   $(VOID)
+
+#
+# Vala
+#
+
+AM_VALAFLAGS=\
+	--vapi-comments \
+	--hide-internal \
+	--abi-stability \
+	--header libabaco.h \
+	--library libabaco \
+  --pkg gio-2.0 \
+  --pkg glib-2.0 \
+  --pkg gobject-2.0 \
+	-D DEBUG=${DEBUG} \
+	-D DEVELOPER=${DEVELOPER} \
+	$(VOID)

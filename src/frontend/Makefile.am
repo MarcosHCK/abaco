@@ -32,10 +32,33 @@ bin_PROGRAMS=\
 #
 
 abaco_SOURCES=\
-  main.cpp \
+  main.vala \
   $(VOID)
-abaco_CPPFLAGS=\
+abaco_CFLAGS=\
+  $(GIO_CFLAGS) \
+  $(GLIB_CFLAGS) \
+  $(GOBJECT_CFLAGS) \
+  $(LLVM_CFLAGS) \
+  -I../backend/ \
   $(VOID)
 abaco_LDFLAGS=\
+  $(GIO_LIBS) \
+  $(GLIB_LIBS) \
+  $(GOBJECT_LIBS) \
+  $(LLVM_LIBS) \
   ../backend/libabaco.la \
   $(VOID)
+
+#
+# Vala
+#
+
+AM_VALAFLAGS=\
+  --vapidir=../backend/ \
+	--vapi-comments \
+	--hide-internal \
+	--abi-stability \
+  --pkg libabaco \
+	-D DEBUG=${DEBUG} \
+	-D DEVELOPER=${DEVELOPER} \
+	$(VOID)

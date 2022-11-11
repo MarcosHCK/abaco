@@ -35,8 +35,8 @@ m4_define([v_STAGE], m4_esyscmd_s([git describe | sed -e 's/^v\([0-9]*\)\.\([0-9
 #
 
 AC_INIT([abaco], [v_VERSION], [abaco.bugs@hcktm.com], [abaco], [https://github.com/MarcosHCK/abaco/])
-AC_CONFIG_SRCDIR([src/frontend/main.cpp])
-AC_LANG([C++])
+AC_CONFIG_SRCDIR([src/frontend/main.vala])
+AC_LANG([C])
 
 #
 # Configure aclocal path
@@ -121,6 +121,7 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 AC_PROG_RANLIB
+AM_PROG_VALAC
 
 PKG_PROG_PKG_CONFIG
 
@@ -146,6 +147,10 @@ fi
 # Check for libraries using pkg-config
 # Note: keep sorted alphabetically 
 #
+
+PKG_CHECK_MODULES([GIO], [gio-2.0])
+PKG_CHECK_MODULES([GLIB], [glib-2.0])
+PKG_CHECK_MODULES([GOBJECT], [gobject-2.0])
 
 #
 # Check for libraries
