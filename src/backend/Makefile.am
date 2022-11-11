@@ -40,6 +40,7 @@ libabaco_la_SOURCES=\
   ast/named.vala \
   ast/node.vala \
   ast/rvalue.vala \
+  ast/scope.vala \
   ast/typed.vala \
   ast/unique.vala \
   compiler.vala \

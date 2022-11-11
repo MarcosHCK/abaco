@@ -35,6 +35,7 @@ ast/list.c
 ast/named.c
 ast/node.c
 ast/rvalue.c
+ast/scope.c
 ast/typed.c
 ast/unique.c
 compiler.c
