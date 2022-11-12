@@ -18,13 +18,13 @@
 
 namespace Abaco.Ast
 {
-  internal class Function : Node, Variable, Named, Unique, Typed
+  internal class Function : Node, IVariable, INamed, IUnique, ITyped
   {
     public string name { get; private set; }
     public string id { get; private set; }
     public string return_type { get; private set; }
     public string typename { get; private set; }
-    public List<Variable> arguments { get; private set; }
+    public List<IVariable> arguments { get; private set; }
 
     /* debug API */
 
@@ -49,7 +49,7 @@ namespace Abaco.Ast
 
     /* constructor */
 
-    public Function (string name, string id, string return_type, List<Variable> arguments)
+    public Function (string name, string id, string return_type, List<IVariable> arguments)
     {
       base ();
       this.name = name;

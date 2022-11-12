@@ -18,7 +18,7 @@
 
 namespace Abaco.Ast
 {
-  internal interface Unique : Node
+  internal interface IUnique : Node
   {
     public abstract string id { get; set; }
   }

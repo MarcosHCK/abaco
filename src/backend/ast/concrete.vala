@@ -18,7 +18,7 @@
 
 namespace Abaco.Ast
 {
-  internal interface Concrete : Node
+  internal interface IConcrete : Node
   {
   }
 }

@@ -18,11 +18,11 @@
 
 namespace Abaco.Ast
 {
-  internal interface Variable : Node, Unique, Typed
+  internal interface IVariable : Node, IUnique, ITyped
   {
   }
 
-  internal class VariableInstance : Node, Variable, Named, Unique, Typed, RValue
+  internal class Variable : Node, IVariable, INamed, IUnique, ITyped, IRValue
   {
     public string name { get; private set; }
     public string id { get; private set; }
@@ -41,7 +41,7 @@ namespace Abaco.Ast
 
     /* constructor */
 
-    public VariableInstance (string name, string id, string typename)
+    public Variable (string name, string id, string typename)
     {
       base ();
       this.name = name;

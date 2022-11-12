@@ -18,7 +18,7 @@
 
 namespace Abaco.Ast
 {
-  internal interface Named : Node
+  internal interface INamed : Node
   {
     public abstract string name { get; set; }
   }

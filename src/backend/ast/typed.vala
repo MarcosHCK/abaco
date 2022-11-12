@@ -18,7 +18,7 @@
 
 namespace Abaco.Ast
 {
-  internal interface Typed : Node
+  internal interface ITyped : Node
   {
     public abstract string typename { get; set; }
   }
