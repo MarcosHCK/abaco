@@ -18,7 +18,7 @@
 
 namespace Abaco.Ast
 {
-  internal class Constant : Node, Typed
+  internal class Constant : Node, RValue, Typed
   {
     public string typename { get; private set; }
     public string value { get; private set; }

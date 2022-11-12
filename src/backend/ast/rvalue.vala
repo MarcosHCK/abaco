@@ -18,7 +18,7 @@
 
 namespace Abaco.Ast
 {
-  internal interface RValue : Node
+  internal interface RValue : Node, Typed
   {
   }
 }
