@@ -26,9 +26,11 @@ namespace Abaco.Ast
 
     public abstract class Annotations
     {
-      public static GLib.Quark source_name;
-      public static GLib.Quark line_number;
-      public static GLib.Quark column_number;
+      public static Quark source_name;
+      public static Quark line_number;
+      public static Quark column_number;
+      public static Quark is_static;
+      public static Quark is_constant;
 
       /* constructor */
 
@@ -37,6 +39,8 @@ namespace Abaco.Ast
         source_name = Quark.from_string ("abaco-node-source-name");
         line_number = Quark.from_string ("abaco-node-line-number");
         column_number = Quark.from_string ("abaco-node-column-number");
+        is_static = Quark.from_string ("abaco-node-is-static");
+        is_constant = Quark.from_string ("abaco-node-is-constant");
       }
     }
 
@@ -56,11 +60,11 @@ namespace Abaco.Ast
     /* public API */
 
     public void set_note (string index, string content) { notes.set_data (index, content); }
-    public void set_note_by_id (GLib.Quark index, string content) { notes.id_set_data (index, content); }
+    public void set_qnote (GLib.Quark index, string content) { notes.id_set_data (index, content); }
     public unowned string get_note (string index) { return notes.get_data (index); }
-    public unowned string get_note_by_id (GLib.Quark index) { return notes.id_get_data (index); }
+    public unowned string get_qnote (GLib.Quark index) { return notes.id_get_data (index); }
     public string steal_note (string index) { return notes.remove_no_notify (index); }
-    public string steal_note_by_id (GLib.Quark index) { return notes.id_remove_no_notify (index); }
+    public string steal_qnote (GLib.Quark index) { return notes.id_remove_no_notify (index); }
 
     /* constructors */
 

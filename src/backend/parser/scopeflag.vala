@@ -15,29 +15,18 @@
  * along with abaco. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-using Abaco.Ast;
 
-namespace Abaco
+namespace Abaco.Partial.Parser
 {
-  internal class Parser : GLib.Object
+  [Flags]
+  internal enum ScopeFlags
   {
-    private UniqueCount uniques;
+    NOTHING = 0,
+    STOPS = (1 << 0),
+    INNER = (1 << 1);
 
-    /* public API */
-
-    public void scan (Tokens tokens, string source) throws GLib.Error
-    {
-    }
-
-    public void parse (Tokens tokens, string source) throws GLib.Error
-    {
-    }
-
-    /* constructors */
-
-    public Parser ()
-    {
-      uniques = UniqueCount (0);
-    }
+    public const ScopeFlags global = ScopeFlags.NOTHING;
+    public const ScopeFlags @namespace = ScopeFlags.STOPS;
+    public const ScopeFlags func = ScopeFlags.STOPS | ScopeFlags.INNER;
   }
 }

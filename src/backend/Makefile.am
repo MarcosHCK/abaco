@@ -47,10 +47,15 @@ libabaco_la_SOURCES=\
   ast/typed.vala \
   ast/unique.vala \
   ast/variable.vala \
+  parser/annotate.vala \
+  parser/error.vala \
+  parser/parser.vala \
+  parser/scopeflag.vala \
+  parser/tree.vala \
+  parser/walk.vala \
   types/type.vala \
   compiler.vala \
   lexer.vala \
-  parser.vala \
   token.vala \
   tokens.vala \
   $(VOID)

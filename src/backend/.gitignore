@@ -42,9 +42,14 @@ ast/scope.c
 ast/typed.c
 ast/unique.c
 ast/variable.c
+parser/annotate.c
+parser/error.c
+parser/parser.c
+parser/scopeflag.c
+parser/tree.c
+parser/walk.c
 types/type.c
 compiler.c
 lexer.c
-parser.c
 token.c
 tokens.c

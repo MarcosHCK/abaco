@@ -86,7 +86,7 @@ namespace Abaco
     {
       foreach (unowned var source in sources)
       {
-        parser.scan (source.tokens, source.name);
+        parser.walk (source.tokens, source.name, false);
       }
     }
 
@@ -95,7 +95,7 @@ namespace Abaco
     {
       foreach (unowned var source in sources)
       {
-        parser.parse (source.tokens, source.name);
+        parser.walk (source.tokens, source.name, true);
       }
     }
 
