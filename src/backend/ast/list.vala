@@ -22,6 +22,34 @@ namespace Abaco.Ast
   {
     public unowned GLib.List<T> children { get; private set; }
 
+    /* type API */
+
+    public struct ListIter<T>
+    {
+      public Ast.List<T> owner;
+      public unowned GLib.List<T>? list;
+
+      /* public API */
+
+      public bool next ()
+      {
+        return list != null;
+      }
+
+      public unowned T @get ()
+      {
+        return (T) list.data;
+      }
+
+      /* constructor */
+
+      public ListIter (List<T> owner)
+      {
+        this.owner = owner;
+        this.list = owner.children;
+      }
+    }
+
     /* debug API */
 
 #if DEVELOPER == 1
@@ -47,6 +75,7 @@ namespace Abaco.Ast
     public void append (T child) { children.append (child); }
     public void prepend (T child) { children.prepend (child); }
     public uint n_children () { return children.length (); }
+    public ListIter<T> iterator () { return ListIter<T> (this); }
 
     public void children_foreach (GLib.Func<unowned T> callback)
     {
@@ -63,7 +92,6 @@ namespace Abaco.Ast
     public List ()
     {
       base ();
-      children = new GLib.List<T> ();
     }
   }
 }

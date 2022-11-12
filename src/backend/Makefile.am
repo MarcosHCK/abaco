@@ -38,6 +38,7 @@ libabaco_la_SOURCES=\
   asm/builder.vala \
   ast/concrete.vala \
   ast/constant.vala \
+  ast/function.vala \
   ast/list.vala \
   ast/named.vala \
   ast/node.vala \

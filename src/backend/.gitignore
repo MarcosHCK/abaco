@@ -33,6 +33,7 @@ libabaco.h
 asm/builder.c
 ast/concrete.c
 ast/constant.c
+ast/function.c
 ast/list.c
 ast/named.c
 ast/node.c
