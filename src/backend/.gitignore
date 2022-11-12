@@ -40,6 +40,7 @@ ast/rvalue.c
 ast/scope.c
 ast/typed.c
 ast/unique.c
+ast/variable.c
 types/type.c
 compiler.c
 lexer.c

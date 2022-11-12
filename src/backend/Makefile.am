@@ -45,6 +45,7 @@ libabaco_la_SOURCES=\
   ast/scope.vala \
   ast/typed.vala \
   ast/unique.vala \
+  ast/variable.vala \
   types/type.vala \
   compiler.vala \
   lexer.vala \
