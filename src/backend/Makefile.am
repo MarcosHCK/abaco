@@ -35,6 +35,7 @@ pkginclude_HEADERS=\
 #
 
 libabaco_la_SOURCES=\
+  asm/builder.vala \
   ast/concrete.vala \
   ast/constant.vala \
   ast/list.vala \
@@ -44,6 +45,7 @@ libabaco_la_SOURCES=\
   ast/scope.vala \
   ast/typed.vala \
   ast/unique.vala \
+  types/type.vala \
   compiler.vala \
   lexer.vala \
   parser.vala \

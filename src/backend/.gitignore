@@ -30,6 +30,7 @@ libabaco.vapi
 libabaco.h
 .dirstamp
 
+asm/builder.c
 ast/concrete.c
 ast/constant.c
 ast/list.c
@@ -39,6 +40,7 @@ ast/rvalue.c
 ast/scope.c
 ast/typed.c
 ast/unique.c
+types/type.c
 compiler.c
 lexer.c
 parser.c
