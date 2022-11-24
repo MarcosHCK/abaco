@@ -16,17 +16,32 @@
  *
  */
 
-namespace Abaco.Partial.Parser
+namespace Abaco
 {
-  [Flags]
-  internal enum ScopeFlags
+  [Compact (opaque = true)]
+  internal class TokenClass
   {
-    NOTHING = 0,
-    STOPS = (1 << 0),
-    INNER = (1 << 1);
+    public TokenType type { get; private set; }
+    public GLib.Regex rexp { get; private set; }
 
-    public const ScopeFlags global = ScopeFlags.NOTHING;
-    public const ScopeFlags @namespace = ScopeFlags.STOPS;
-    public const ScopeFlags func = ScopeFlags.STOPS | ScopeFlags.INNER;
+    /* constructors */
+
+    public TokenClass (string rexp, TokenType type)
+    {
+      try
+      {
+        this.rexp = new GLib.Regex (rexp, RegexCompileFlags.OPTIMIZE);
+        this.type = type;
+      }
+      catch (GLib.Error e)
+      {
+        error (@"$(e.domain):$(e.code):$(e.message)");
+      }
+    }
+
+    public TokenClass.escaped (string exp, TokenType type)
+    {
+      this (Regex.escape_string (exp), type);
+    }
   }
 }

@@ -237,10 +237,11 @@ namespace Abaco
         new TokenClass.escaped ("using", TokenType.KEYWORD),
         new TokenClass.escaped ("const", TokenType.KEYWORD),
         new TokenClass.escaped ("static", TokenType.KEYWORD),
+        new TokenClass.escaped ("function", TokenType.KEYWORD),
         new TokenClass.escaped ("template", TokenType.KEYWORD),
         new TokenClass.escaped ("typename", TokenType.KEYWORD),
         new TokenClass.escaped ("namespace", TokenType.KEYWORD),
-        new TokenClass ("[a-zA-Z_][a-zA-Z_0-9]*", TokenType.IDENTIFIER),
+        new TokenClass ("[a-zA-Z_][a-zA-Z_0-9\\.]*", TokenType.IDENTIFIER),
         new TokenClass ("[0-9\\.][a-zA-Z_0-9\\.]*", TokenType.LITERAL),
       };
     }

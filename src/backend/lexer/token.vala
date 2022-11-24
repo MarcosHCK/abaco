@@ -18,43 +18,6 @@
 
 namespace Abaco
 {
-  internal enum TokenType
-  {
-    IDENTIFIER,
-    KEYWORD,
-    SEPARATOR,
-    OPERATOR,
-    LITERAL,
-    COMMENT,
-  }
-
-  [Compact (opaque = true)]
-  internal class TokenClass
-  {
-    public TokenType type { get; private set; }
-    public GLib.Regex rexp { get; private set; }
-
-    /* constructors */
-
-    public TokenClass (string rexp, TokenType type)
-    {
-      try
-      {
-        this.rexp = new GLib.Regex (rexp, RegexCompileFlags.OPTIMIZE);
-        this.type = type;
-      }
-      catch (GLib.Error e)
-      {
-        error (@"$(e.domain):$(e.code):$(e.message)");
-      }
-    }
-
-    public TokenClass.escaped (string exp, TokenType type)
-    {
-      this (Regex.escape_string (exp), type);
-    }
-  }
-
   internal struct Token
   {
     public unowned TokenType type;

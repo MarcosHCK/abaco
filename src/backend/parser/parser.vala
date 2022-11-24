@@ -23,72 +23,56 @@ namespace Abaco
   internal class Parser : GLib.Object
   {
     private UniqueCount uniques;
-    private Partial.Parser.Tree tree;
+
+    [Flags]
+    enum ScopeFlags
+    {
+      NONE = 0,
+      INNER = (1 << 1),
+      STOPS = (1 << 2),
+    }
 
     /* private API */
 
-    private void walk_namespace (Walk? state) throws GLib.Error
+    private void walk_namespace (Walker? walker, Token? begin)
+      throws GLib.Error
     {
-      unowned var name = fetch_identifier (state);
-      unowned var open = fetch_separator (state, "{");
-
-      state.scopeflg.push_head (ScopeFlags.namespace);
-      state.prefixes.push_tail (name.value);
-
-      walk_scope (state, state.prefix ());
-
-      state.prefixes.pop_tail ();
-      state.scopeflg.pop_head ();
+      unowned var name = walker.pop_identifier ();
+      unowned var sep = walker.pop_separator ("{");
+      walk_scope (walker, ScopeFlags.STOPS, sep);
     }
 
-    private void walk_scope (Walk? state, string name) throws GLib.Error
+    private void walk_scope (Walker? walker, ScopeFlags flg, Token? begin = null)
+      throws GLib.Error
     {
-      unowned var flags = state.scopeflg.peek_head ();
-      unowned var source = state.source;
-      unowned var token = (Token?) null;
-      unowned var scope = (Scope?) null;
-
-      if ((scope = (Scope) tree.lookup (name)) == null)
-      {
-        var down = new Scope ();
-      assert (tree.insert (name, down));
-          scope = down;
-      }
-
-      while ((token = state.tokens.pop_tail ()) != null)
+      unowned Token? token;
+      while ((token = walker.pop ()) != null)
       {
         unowned var type = token.type;
         unowned var value = token.value;
 
         switch (type)
         {
+        case TokenType.IDENTIFIER:
+          if (! (ScopeFlags.INNER in flg))
+            throw ParserError.unexpected_token (token, walker.source);
+          else
+          {
+            assert_not_reached ();
+          }
+          break;
         case TokenType.KEYWORD:
           {
             switch (value)
             {
-            default:
-              {
-                if (ScopeFlags.INNER in flags)
-                {
-                  switch (value)
-                  {
-                  default:
-                    throw ParserError.unexpected_token (token, state.source);
-                  }
-                }
-                else
-                {
-                  switch (value)
-                  {
-                  case "namespace":
-                    walk_namespace (state);
-                    break;
-                  default:
-                    throw ParserError.unexpected_token (token, state.source);
-                  }
-                }
-              }
+            case "namespace":
+              if (ScopeFlags.INNER in flg)
+                throw ParserError.unexpected_token (token, walker.source);
+              else
+                walk_namespace (walker, token);
               break;
+            default:
+              throw ParserError.unexpected_token (token, walker.source);
             }
           }
           break;
@@ -97,32 +81,38 @@ namespace Abaco
             unowned var c = value.get_char ();
             unowned var n = value.next_char ();
             if (n.get_char () != (unichar) 0)
-              throw ParserError.unexpected_token (token, state.source);
+              throw ParserError.unexpected_token (token, walker.source);
             else
             {
               switch (c)
               {
               case (unichar) '}':
+                if (ScopeFlags.STOPS in flg)
+                  return;
+                else
                 {
-                  if (ScopeFlags.STOPS in flags)
-                    return;
-                  else
-                    throw ParserError.unexpected_token (token, state.source);
+                  throw ParserError.unexpected_token (token, walker.source);
                 }
+                break;
               default:
-                throw ParserError.unexpected_token (token, state.source);
+                throw ParserError.unexpected_token (token, walker.source);
               }
             }
           }
           break;
         default:
-          throw ParserError.unexpected_token (token, state.source);
+          throw ParserError.unexpected_token (token, walker.source);
         }
       }
 
-      if (ScopeFlags.STOPS in flags)
+      if (ScopeFlags.STOPS in flg)
       {
-        throw ParserError.unexpected_eof (state.lasttoken, state.source);
+        unowned var last = walker.last;
+        unowned var source = walker.source;
+        var locate1 = ParserError.locate (last, source);
+        var locate2 = ParserError.locate_no_source (begin);
+        var message = @"$(locate1): Missing '{' token to close scope at $(locate2)";
+        throw new ParserError.EXPECTED_TOKEN (message);
       }
     }
 
@@ -130,35 +120,29 @@ namespace Abaco
 
     public void walk (Tokens tokens_, string source, bool scanning) throws GLib.Error
     {
-      var state = Walk ();
+      var walker = Walker ();
       var tokens = new Queue<unowned Token?> ();
-      var scopeflg = new Queue<ScopeFlags> ();
-      var prefixes = new Queue<unowned string> ();
 
       unowned var array = tokens_.tokens;
       for (int i = 0; i < array.length; i++)
       {
         unowned var ar = & array [i];
         if (ar.type != TokenType.COMMENT)
-          tokens.push_head (*ar);
+          tokens.push_tail (*ar);
       }
 
-      state.tokens = tokens;
-      state.scopeflg = scopeflg;
-      state.prefixes = prefixes;
-      state.source = source;
-      state.lasttoken = tokens.peek_head ();
-      state.scanning = scanning;
+        walker.tokens = tokens;
+        walker.source = source;
+        walker.last = tokens.peek_tail ();
+        walker.scanning = scanning;
 
-      scopeflg.push_head (ScopeFlags.global);
-      walk_scope (state, "");
+        walk_scope (walker, ScopeFlags.NONE);
     }
 
     /* constructors */
 
     public Parser ()
     {
-      tree = new Partial.Parser.Tree (new Scope ());
       uniques = UniqueCount (0);
     }
   }

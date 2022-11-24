@@ -47,17 +47,17 @@ libabaco_la_SOURCES=\
   ast/typed.vala \
   ast/unique.vala \
   ast/variable.vala \
+  lexer/lexer.vala \
+  lexer/token.vala \
+  lexer/tokenclass.vala \
+  lexer/tokens.vala \
+  lexer/tokentype.vala \
   parser/annotate.vala \
   parser/error.vala \
   parser/parser.vala \
-  parser/scopeflag.vala \
-  parser/tree.vala \
-  parser/walk.vala \
+  parser/walker.vala \
   types/type.vala \
   compiler.vala \
-  lexer.vala \
-  token.vala \
-  tokens.vala \
   $(VOID)
 libabaco_la_CFLAGS=\
   $(GIO_CFLAGS) \

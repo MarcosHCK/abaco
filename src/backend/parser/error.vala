@@ -27,23 +27,23 @@ namespace Abaco
     REDEFINED,
     EXPECTED;
 
-    /* private API */
+    /* internal API */
 
-    private static string locate (Token? token, string source)
+    internal static string locate (Token? token, string source)
     {
       return @"$(source): $(token.line): $(token.column)";
     }
 
-    /* throwers API */
+    internal static string locate_no_source (Token? token)
+    {
+      return @"$(token.line): $(token.column)";
+    }
+
+    /* throwers API - simple */
 
     internal static ParserError unexpected_eof (Token? last, string source)
     {
       return new ParserError.UNEXPECTED_EOF ("%s: Unexpected end of file", locate (last, source));
-    }
-
-    internal static ParserError expected_token (Token? token, string source, string value)
-    {
-      return new ParserError.EXPECTED_TOKEN ("%s: Expected token '%s'", locate (token, source), value);
     }
 
     internal static ParserError unexpected_token (Token? token, string source)
@@ -56,14 +56,26 @@ namespace Abaco
       return new ParserError.EXPECTED_TOKEN ("%s: Expected indentifier", locate (last, source));
     }
 
-    internal static ParserError redefined_symbol_full (Token? token, string source, string name, Token? token2, string source2)
+    internal static ParserError expected_literal (Token? last, string source)
     {
-      return new ParserError.REDEFINED ("%s: Redefined symbol '%s', previously defined at %s", locate (token, source), name, locate (token, source));
+      return new ParserError.EXPECTED_TOKEN ("%s: Expected literal", locate (last, source));
     }
 
     internal static ParserError expected_rvalue (Token? token, string source)
     {
       return new ParserError.EXPECTED ("%s: Expected rvalue", locate (token, source));
+    }
+
+    internal static ParserError expected_token (Token? token, string source, string value)
+    {
+      return new ParserError.EXPECTED_TOKEN ("%s: Expected token '%s'", locate (token, source), value);
+    }
+
+    /* throwers API - verbose */
+
+    internal static ParserError redefined_symbol_full (Token? token, string source, string name, Token? token2, string source2)
+    {
+      return new ParserError.REDEFINED ("%s: Redefined symbol '%s', previously defined at %s", locate (token, source), name, locate (token, source));
     }
   }
 }
