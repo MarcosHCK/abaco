@@ -18,9 +18,8 @@
 
 namespace Abaco.Ast
 {
-  internal class Function : Node, IVariable, INamed, IUnique, ITyped
+  internal class Function : Node, IUnique, ITyped, IVariable
   {
-    public string name { get; private set; }
     public string id { get; private set; }
     public string return_type { get; private set; }
     public string typename { get; private set; }
@@ -30,29 +29,21 @@ namespace Abaco.Ast
 
 #if DEVELOPER == 1
 
-    public virtual string debug_ext (size_t spaces, string? extra)
-    {
-      return
-        (extra != null)
-         ? ("%s, %s").printf (base.debug (spaces), extra)
-         : base.debug (spaces)
-      + "\r\n"
-      + arguments.debug (spaces + 1);
-    }
-
     public override string debug (size_t spaces)
     {
-      return debug_ext (spaces, null);
+      return
+        ("%s, id '%s', type '%s'").printf (base.debug (spaces), id, typename)
+      + "\r\n"
+      + arguments.debug (spaces + 1);
     }
 
 #endif // DEVELOPER
 
     /* constructor */
 
-    public Function (string name, string id, string return_type, List<IVariable> arguments)
+    public Function (string id, string return_type, List<IVariable> arguments)
     {
       base ();
-      this.name = name;
       this.id = id;
       this.return_type = return_type;
       this.arguments = arguments;
@@ -66,6 +57,33 @@ namespace Abaco.Ast
         else
           typename += arg.typename;
       }
+    }
+  }
+
+  internal class ConcreteFunction : Function, IConcrete
+  {
+    public Scope body { get; private set; }
+
+    /* debug API */
+
+#if DEVELOPER == 1
+
+    public override string debug (size_t spaces)
+    {
+      return
+        base.debug (spaces)
+      + "\r\n"
+      + body.debug (spaces + 1);
+    }
+
+#endif // DEVELOPER
+
+    /* constructor */
+
+    public ConcreteFunction (string id, string return_type, List<IVariable> arguments, Scope body)
+    {
+      base (id, return_type, arguments);
+      this.body = body;
     }
   }
 }

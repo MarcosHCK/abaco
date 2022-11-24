@@ -74,6 +74,7 @@ namespace Abaco.Ast
 
     public void append (T child) { children.append (child); }
     public void prepend (T child) { children.prepend (child); }
+    public void remove (T child) { children.remove (child); }
     public uint n_children () { return children.length (); }
     public ListIter<T> iterator () { return ListIter<T> (this); }
 

@@ -18,29 +18,32 @@
 
 namespace Abaco.Ast
 {
-  internal class Constant : Node, ITyped, IRValue
+  internal class Global : Variable
   {
-    public string typename { get; private set; }
-    public string value { get; private set; }
-
-    /* debug API */
+    public bool is_constant { get; private set; }
+    public IRValue? rvalue { get; private set; }
 
 #if DEVELOPER == 1
 
     public override string debug (size_t spaces)
     {
-      return ("%s, value '%s'").printf (base.debug (spaces), value);
+      return
+        base.debug (spaces)
+      +
+        ((rvalue == null)
+      ? ""
+      : "\r\n"
+      + rvalue.debug (spaces + 1));
     }
 
 #endif // DEVELOPER
 
     /* constructors */
 
-    public Constant (string value)
+    public Global (string id, string typename, bool is_constant, IRValue? rvalue)
     {
-      base ();
-      this.typename = null;
-      this.value = value;
+      base (id, typename);
+      this.rvalue = rvalue;
     }
   }
 }

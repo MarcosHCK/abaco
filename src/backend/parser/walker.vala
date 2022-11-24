@@ -16,7 +16,7 @@
  *
  */
 
-namespace Abaco.Partial.Parser
+namespace Abaco
 {
   internal struct Walker
   {
@@ -25,12 +25,71 @@ namespace Abaco.Partial.Parser
     public unowned Token? last;
     public bool scanning;
 
+    public bool is_empty
+    {
+      get
+      {
+        return tokens.length == 0;
+      }
+    }
+
     /* public API */
 
-    public unowned Token? pop ()
+    public unowned Token? peek () { return tokens.peek_head (); }
+    public unowned Token? pop () { return tokens.pop_head (); }
+
+    public bool check_identifier ()
+    {
+      unowned var next = peek ();
+      if (next == null)
+        return false;
+      else
+      {
+        var type = next.type;
+        if (type != TokenType.IDENTIFIER)
+          return false;
+        else
+          return true;
+      }
+    }
+
+    public bool check_keyword (string? specific = null)
+    {
+      unowned var next = peek ();
+      if (next == null)
+        return false;
+      else
+      {
+        var type = next.type;
+        if (type != TokenType.KEYWORD)
+          return false;
+        else
+          return true;
+      }
+    }
+
+    public Queue<unowned Token?> collect (string terminator)
       throws GLib.Error
     {
-      return tokens.pop_head ();
+      var queue = new Queue<unowned Token?> ();
+      unowned Token? next;
+
+      while (true)
+      {
+        if ((next = pop ()) == null)
+        {
+          throw ParserError.expected_token_eof (last, terminator);
+        }
+
+        if (next.type == TokenType.SEPARATOR)
+        {
+          if (terminator == next.value)
+            break;
+        }
+
+        queue.push_tail (next);
+      }
+    return queue;
     }
 
     public unowned Token? pop_identifier ()
@@ -38,12 +97,12 @@ namespace Abaco.Partial.Parser
     {
       unowned var next = pop ();
       if (next == null)
-        throw ParserError.unexpected_eof (last, source);
+        throw ParserError.unexpected_eof (last);
       else
       {
         var type = next.type;
         if (type != TokenType.IDENTIFIER)
-          throw ParserError.expected_identifier (next, source);
+          throw ParserError.expected_identifier (next);
         else
           return next;
       }
@@ -54,37 +113,37 @@ namespace Abaco.Partial.Parser
     {
       unowned var next = pop ();
       if (next == null)
-        throw ParserError.unexpected_eof (last, source);
+        throw ParserError.unexpected_eof (last);
       else
       {
         var type = next.type;
         if (type != TokenType.LITERAL)
-          throw ParserError.expected_literal (next, source);
+          throw ParserError.expected_literal (next);
         else
           return next;
       }
     }
 
-    public unowned Token? pop_separator (string specific = "")
+    public unowned Token? pop_separator (string? specific = null)
       throws GLib.Error
     {
       unowned var next = pop ();
       if (next == null)
-        throw ParserError.unexpected_eof (last, source);
+        throw ParserError.unexpected_eof (last);
       else
       {
         var type = next.type;
         if (type != TokenType.SEPARATOR)
         {
-          if (specific != "")
-            throw ParserError.expected_token (next, source, specific);
+          if (specific != null)
+            throw ParserError.expected_token (next, specific);
           else
-            throw ParserError.unexpected_token (next, source);
+            throw ParserError.unexpected_token (next);
         }
         else
         {
-          if (specific != "" && next.value != specific)
-            throw ParserError.expected_token (next, source, specific);
+          if (specific != null && next.value != specific)
+            throw ParserError.expected_token (next, specific);
           else
             return next;
         }

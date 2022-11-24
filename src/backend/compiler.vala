@@ -85,18 +85,14 @@ namespace Abaco
       requires (checkstage (Stage.SCAN, Stage.FEED))
     {
       foreach (unowned var source in sources)
-      {
-        parser.walk (source.tokens, source.name, false);
-      }
+        parser.walk (source.tokens, source.name, true);
     }
 
     public void parse_sources () throws GLib.Error
       requires (checkstage (Stage.PARSE, Stage.SCAN))
     {
       foreach (unowned var source in sources)
-      {
-        parser.walk (source.tokens, source.name, true);
-      }
+        parser.walk (source.tokens, source.name, false);
     }
 
     /* constructor */

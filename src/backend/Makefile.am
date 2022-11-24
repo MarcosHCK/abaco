@@ -36,12 +36,18 @@ pkginclude_HEADERS=\
 
 libabaco_la_SOURCES=\
   asm/builder.vala \
+  ast/assign.vala \
+  ast/cast.vala \
   ast/concrete.vala \
   ast/constant.vala \
   ast/function.vala \
+  ast/global.vala \
+  ast/invoke.vala \
   ast/list.vala \
-  ast/named.vala \
   ast/node.vala \
+  ast/operation.vala \
+  ast/profile.vala \
+  ast/return.vala \
   ast/rvalue.vala \
   ast/scope.vala \
   ast/typed.vala \
@@ -54,7 +60,11 @@ libabaco_la_SOURCES=\
   lexer/tokentype.vala \
   parser/annotate.vala \
   parser/error.vala \
+  parser/operators.vala \
   parser/parser.vala \
+  parser/rvalue.vala \
+  parser/space.vala \
+  parser/unique.vala \
   parser/walker.vala \
   types/type.vala \
   compiler.vala \
@@ -82,6 +92,7 @@ libabaco_la_LDFLAGS=\
 #
 
 AM_VALAFLAGS=\
+  --vapidir=vapi/ \
 	--vapi-comments \
 	--hide-internal \
 	--abi-stability \
@@ -90,6 +101,7 @@ AM_VALAFLAGS=\
   --pkg gio-2.0 \
   --pkg glib-2.0 \
   --pkg gobject-2.0 \
+  --pkg patch \
 	-D DEBUG=${DEBUG} \
 	-D DEVELOPER=${DEVELOPER} \
 	$(VOID)

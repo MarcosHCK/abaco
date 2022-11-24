@@ -31,12 +31,19 @@ libabaco.h
 .dirstamp
 
 asm/builder.c
+ast/assign.c
+ast/cast.c
 ast/concrete.c
 ast/constant.c
 ast/function.c
+ast/global.c
+ast/invoke.c
 ast/list.c
 ast/named.c
 ast/node.c
+ast/operation.c
+ast/profile.c
+ast/return.c
 ast/rvalue.c
 ast/scope.c
 ast/typed.c
@@ -49,7 +56,11 @@ lexer/tokens.c
 lexer/tokentype.c
 parser/annotate.c
 parser/error.c
+parser/operators.c
 parser/parser.c
+parser/rvalue.c
+parser/space.c
+parser/unique.c
 parser/walker.c
 types/type.c
 compiler.c

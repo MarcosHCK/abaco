@@ -22,9 +22,8 @@ namespace Abaco.Ast
   {
   }
 
-  internal class Variable : Node, IVariable, INamed, IUnique, ITyped, IRValue
+  internal class Variable : Node, IUnique, ITyped, IRValue, IVariable
   {
-    public string name { get; private set; }
     public string id { get; private set; }
     public string typename { get; private set; }
 
@@ -34,17 +33,16 @@ namespace Abaco.Ast
 
     public override string debug (size_t spaces)
     {
-      return ("%s, name '%s', id '%s'").printf (base.debug (spaces), name, id);
+      return ("%s, id '%s'").printf (base.debug (spaces), id);
     }
 
 #endif // DEVELOPER
 
     /* constructor */
 
-    public Variable (string name, string id, string typename)
+    public Variable (string id, string typename)
     {
       base ();
-      this.name = name;
       this.id = id;
       this.typename = typename;
     }

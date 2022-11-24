@@ -25,57 +25,58 @@ namespace Abaco
     EXPECTED_TOKEN,
     UNEXPECTED_TOKEN,
     REDEFINED,
-    EXPECTED;
+    EXPECTED,
+    INVALID;
 
     /* internal API */
 
-    internal static string locate (Token? token, string source)
-    {
-      return @"$(source): $(token.line): $(token.column)";
-    }
-
-    internal static string locate_no_source (Token? token)
+    internal static string locate (Token? token)
     {
       return @"$(token.line): $(token.column)";
     }
 
+    internal static string locate2 (Ast.Node? node)
+    {
+      unowned var line = node.get_qnote (Ast.Node.Annotations.line_number);
+      unowned var column = node.get_qnote (Ast.Node.Annotations.column_number);
+      return @"$(line): $(column)";
+    }
+
     /* throwers API - simple */
 
-    internal static ParserError unexpected_eof (Token? last, string source)
+    internal static ParserError unexpected_eof (Token? last)
     {
-      return new ParserError.UNEXPECTED_EOF ("%s: Unexpected end of file", locate (last, source));
+      return new ParserError.UNEXPECTED_EOF ("%s: Unexpected end of file", locate (last));
     }
 
-    internal static ParserError unexpected_token (Token? token, string source)
+    internal static ParserError unexpected_token (Token? token)
     {
-      return new ParserError.UNEXPECTED_TOKEN ("%s: Unexpected token '%s'", locate (token, source), token.value);
+      return new ParserError.UNEXPECTED_TOKEN ("%s: Unexpected token '%s'", locate (token), token.value);
     }
 
-    internal static ParserError expected_identifier (Token? last, string source)
+    internal static ParserError expected_identifier (Token? last)
     {
-      return new ParserError.EXPECTED_TOKEN ("%s: Expected indentifier", locate (last, source));
+      return new ParserError.EXPECTED_TOKEN ("%s: Expected indentifier", locate (last));
     }
 
-    internal static ParserError expected_literal (Token? last, string source)
+    internal static ParserError expected_literal (Token? last)
     {
-      return new ParserError.EXPECTED_TOKEN ("%s: Expected literal", locate (last, source));
+      return new ParserError.EXPECTED_TOKEN ("%s: Expected literal", locate (last));
     }
 
-    internal static ParserError expected_rvalue (Token? token, string source)
+    internal static ParserError expected_rvalue (Token? token)
     {
-      return new ParserError.EXPECTED ("%s: Expected rvalue", locate (token, source));
+      return new ParserError.EXPECTED ("%s: Expected rvalue", locate (token));
     }
 
-    internal static ParserError expected_token (Token? token, string source, string value)
+    internal static ParserError expected_token (Token? token, string value)
     {
-      return new ParserError.EXPECTED_TOKEN ("%s: Expected token '%s'", locate (token, source), value);
+      return new ParserError.EXPECTED_TOKEN ("%s: Expected '%s'", locate (token), value);
     }
 
-    /* throwers API - verbose */
-
-    internal static ParserError redefined_symbol_full (Token? token, string source, string name, Token? token2, string source2)
+    internal static ParserError expected_token_eof (Token? last, string value)
     {
-      return new ParserError.REDEFINED ("%s: Redefined symbol '%s', previously defined at %s", locate (token, source), name, locate (token, source));
+      return new ParserError.EXPECTED_TOKEN ("%s: Expected '%s' before end of line", locate (last), value);
     }
   }
 }

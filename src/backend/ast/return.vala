@@ -18,29 +18,28 @@
 
 namespace Abaco.Ast
 {
-  internal class Constant : Node, ITyped, IRValue
+  internal class Return : Node
   {
-    public string typename { get; private set; }
-    public string value { get; private set; }
-
-    /* debug API */
+    public IRValue? rvalue { get; private set; }
 
 #if DEVELOPER == 1
 
     public override string debug (size_t spaces)
     {
-      return ("%s, value '%s'").printf (base.debug (spaces), value);
+      return
+        base.debug (spaces)
+      + "\r\n"
+      + rvalue.debug (spaces + 1);
     }
 
 #endif // DEVELOPER
 
     /* constructors */
 
-    public Constant (string value)
+    public Return (IRValue? rvalue)
     {
       base ();
-      this.typename = null;
-      this.value = value;
+      this.rvalue = rvalue;
     }
   }
 }

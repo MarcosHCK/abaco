@@ -16,12 +16,23 @@
  *
  */
 
-namespace Abaco.Partial.Parser
+namespace Abaco.Parse
 {
+  internal static void annotate_name (Ast.Node node, Token? token)
+  {
+    node.set_qnote (Ast.Node.Annotations.name, token.value);
+  }
+
   internal static void annotate_location (Ast.Node node, Token? token, string source)
   {
     node.set_qnote (Ast.Node.Annotations.source_name, source);
     node.set_qnote (Ast.Node.Annotations.line_number, token.line.to_string ());
     node.set_qnote (Ast.Node.Annotations.column_number, token.column.to_string ());
+  }
+
+  internal static void annotate_variable (Ast.Node node, Token? name, string source)
+  {
+    annotate_name (node, name);
+    annotate_location (node, name, source);
   }
 }

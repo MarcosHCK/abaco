@@ -18,29 +18,8 @@
 
 namespace Abaco.Ast
 {
-  internal class Constant : Node, ITyped, IRValue
+  public errordomain AstError
   {
-    public string typename { get; private set; }
-    public string value { get; private set; }
-
-    /* debug API */
-
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return ("%s, value '%s'").printf (base.debug (spaces), value);
-    }
-
-#endif // DEVELOPER
-
-    /* constructors */
-
-    public Constant (string value)
-    {
-      base ();
-      this.typename = null;
-      this.value = value;
-    }
+    FAILED,
   }
 }

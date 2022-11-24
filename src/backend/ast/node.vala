@@ -26,21 +26,21 @@ namespace Abaco.Ast
 
     public abstract class Annotations
     {
+      public static Quark name;
       public static Quark source_name;
       public static Quark line_number;
       public static Quark column_number;
       public static Quark is_static;
-      public static Quark is_constant;
 
       /* constructor */
 
       static construct
       {
+        name = Quark.from_string ("abaco-node-name");
         source_name = Quark.from_string ("abaco-node-source-name");
         line_number = Quark.from_string ("abaco-node-line-number");
         column_number = Quark.from_string ("abaco-node-column-number");
         is_static = Quark.from_string ("abaco-node-is-static");
-        is_constant = Quark.from_string ("abaco-node-is-constant");
       }
     }
 

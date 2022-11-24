@@ -18,8 +18,30 @@
 
 namespace Abaco.Ast
 {
-  internal interface INamed : Node
+  internal class Cast : Node, ITyped, IRValue
   {
-    public abstract string name { get; set; }
+    public string typename { get; private set; }
+    public IRValue rvalue { get; private set; }
+
+#if DEVELOPER == 1
+
+    public override string debug (size_t spaces)
+    {
+      return
+        ("%s, to '%s'").printf (base.debug (spaces), typename)
+      + "\r\n"
+      + rvalue.debug (spaces + 1);
+    }
+
+#endif // DEVELOPER
+
+    /* constructors */
+
+    public Cast (string typename, IRValue rvalue)
+    {
+      base ();
+      this.typename = typename;
+      this.rvalue = rvalue;
+    }
   }
 }

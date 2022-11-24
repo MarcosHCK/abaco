@@ -16,31 +16,10 @@
  *
  */
 
-namespace Abaco.Ast
+namespace Abaco
 {
-  internal class Constant : Node, ITyped, IRValue
-  {
-    public string typename { get; private set; }
-    public string value { get; private set; }
-
-    /* debug API */
-
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return ("%s, value '%s'").printf (base.debug (spaces), value);
-    }
-
-#endif // DEVELOPER
-
-    /* constructors */
-
-    public Constant (string value)
-    {
-      base ();
-      this.typename = null;
-      this.value = value;
-    }
-  }
+  [CCode (cname = "g_prefix_error"), PrintfFormat]
+  internal static void prefix_error (ref GLib.Error error, string format, ...);
+  [CCode (cname = "g_prefix_error_literal")]
+  internal static void prefix_error_literal (ref GLib.Error error, string literal);
 }
