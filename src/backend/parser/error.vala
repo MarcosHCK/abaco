@@ -35,13 +35,6 @@ namespace Abaco
       return @"$(token.line): $(token.column)";
     }
 
-    internal static string locate2 (Ast.Node? node)
-    {
-      unowned var line = node.get_qnote (Ast.Node.Annotations.line_number);
-      unowned var column = node.get_qnote (Ast.Node.Annotations.column_number);
-      return @"$(line): $(column)";
-    }
-
     /* throwers API - simple */
 
     internal static ParserError unexpected_eof (Token? last)

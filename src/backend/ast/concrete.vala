@@ -20,5 +20,6 @@ namespace Abaco.Ast
 {
   internal interface IConcrete : Node
   {
+    public abstract Scope body { get; set; }
   }
 }

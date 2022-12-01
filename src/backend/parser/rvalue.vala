@@ -390,7 +390,7 @@ namespace Abaco.Parse
     if (rvalues.length > 1)
     {
       var node = rvalues.pop_nth (1);
-      var locate = ParserError.locate2 (node);
+      var locate = AstError.locate (node);
       var message = @"$(locate): Unexpected rvalue";
       throw new ParserError.FAILED (message);
     }

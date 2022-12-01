@@ -27,7 +27,10 @@ namespace Abaco.Ast
     {
       get
       {
-        return target.typename;
+        if (target is Function)
+          return ((Function) target).return_type;
+        else
+          return target.typename;
       }
 
       private set

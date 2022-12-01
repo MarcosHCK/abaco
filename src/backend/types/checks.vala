@@ -16,24 +16,16 @@
  *
  */
 
-namespace Abaco
+namespace Abaco.Types
 {
-  public static int main (string[] args)
+  internal static bool is_special (string typename)
   {
-    try
-    {
-      var file = GLib.File.new_for_path ("/home/marcos/Desktop/sample.abc");
-      var stream = file.read ();
-      var compiler = new Compiler ();
-        compiler.feed_source (stream, file.get_basename ());
-        compiler.scan_sources ();
-        compiler.parse_sources ();
-        compiler.profile ();
-    }
-    catch (GLib.Error e)
-    {
-      error (@"$(e.domain):$(e.code):$(e.message)");
-    }
-  return 0;
+    return typename.get_char () == (unichar) '$';
+  }
+
+  internal static unowned string? get_special (string typename)
+    requires (is_special (typename))
+  {
+    return typename.next_char ();
   }
 }

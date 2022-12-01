@@ -27,7 +27,7 @@ namespace Abaco.Ast
     {
       get
       {
-        return rvalue.typename;
+        return target.typename;
       }
 
       private set

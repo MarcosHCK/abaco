@@ -15,7 +15,6 @@
  * along with abaco. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-using Abaco.Asm;
 
 namespace Abaco.Types
 {
@@ -26,10 +25,11 @@ namespace Abaco.Types
     /* abstract API */
 
     public abstract bool checkliteral (string value);
+    public abstract bool checkcast (Type other);
 
     /* constructor */
 
-    protected Type (string typename, Builder builder)
+    protected Type (string typename)
     {
       this.typename = typename;
     }
@@ -38,17 +38,30 @@ namespace Abaco.Types
   [Compact (opaque = true)]
   internal class Table : HashTable<unowned string, Type>
   {
+    static Table? global = null;
+
     /* public API */
 
-    public void register (Type type)
+    public static void ensure ()
     {
-      unowned var name = type.typename;
-      this.insert (name, type);
+      global = new Table ();
+    }
+
+    public static void register (Type type)
+      requires (global != null)
+    {
+      global.insert (type.typename, type);
+    }
+
+    public static Type? lookup (string name)
+      requires (global != null)
+    {
+      assert_not_reached ();
     }
 
     /* constructor */
 
-    public Table (Builder builder)
+    public Table ()
     {
       unowned var hash = GLib.str_hash;
       unowned var equal = GLib.str_equal;

@@ -26,7 +26,6 @@ namespace Abaco.Ast
 
     public struct ListIter<T>
     {
-      public Ast.List<T> owner;
       public unowned GLib.List<T>? list;
 
       /* public API */
@@ -38,15 +37,16 @@ namespace Abaco.Ast
 
       public unowned T @get ()
       {
-        return (T) list.data;
+        unowned var data = (T) list.data;
+          list = list.next;
+        return data;
       }
 
       /* constructor */
 
-      public ListIter (List<T> owner)
+      public ListIter (GLib.List<T> list)
       {
-        this.owner = owner;
-        this.list = owner.children;
+        this.list = list;
       }
     }
 
@@ -76,7 +76,7 @@ namespace Abaco.Ast
     public void prepend (T child) { children.prepend (child); }
     public void remove (T child) { children.remove (child); }
     public uint n_children () { return children.length (); }
-    public ListIter<T> iterator () { return ListIter<T> (this); }
+    public ListIter<T> iterator () { return ListIter<T> (children); }
 
     public void children_foreach (GLib.Func<unowned T> callback)
     {

@@ -20,8 +20,20 @@ namespace Abaco.Ast
 {
   internal class Constant : Node, ITyped, IRValue
   {
-    public string typename { get; private set; }
     public string value { get; private set; }
+
+    private string? _typename = null;
+    public string typename
+    {
+      get { return _typename; }
+      set
+      {
+        if (unlikely (_typename != null))
+          error ("Constant has already a type");
+        else
+          _typename = value;
+      }
+    }
 
     /* debug API */
 
@@ -29,7 +41,10 @@ namespace Abaco.Ast
 
     public override string debug (size_t spaces)
     {
-      return ("%s, value '%s'").printf (base.debug (spaces), value);
+      return ("%s, type '%s', value '%s'").printf
+        (base.debug (spaces),
+         typename ?? "(unassigned)",
+          value);
     }
 
 #endif // DEVELOPER

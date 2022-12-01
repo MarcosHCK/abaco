@@ -33,6 +33,7 @@ namespace Abaco
       FEED,     /* Source are being fed into compiler */
       SCAN,     /* All sources are being scaned for declaration  */
       PARSE,    /* All sources are being parsed to construct a program tree */
+      PROFILE,  /* Program tree is being scanned for inconsistencies */
       COMPILE,  /* Program tree is being compiled into intermediate code */
       OPTIMIZE, /* Intermediate code is being optimized */
     }
@@ -95,6 +96,18 @@ namespace Abaco
         parser.walk (source.tokens, source.name, false);
     }
 
+    public void profile () throws GLib.Error
+      requires (checkstage (Stage.PARSE, Stage.PARSE))
+    {
+      parser.profile ();
+    }
+
+    public void compile () throws GLib.Error
+      requires (checkstage (Stage.PARSE, Stage.PROFILE))
+    {
+      assert_not_reached ();
+    }
+
     /* constructor */
 
     public Compiler ()
@@ -103,6 +116,11 @@ namespace Abaco
       parser = new Parser ();
       sources = new List<Source> ();
       stage = Stage.FEED;
+    }
+
+    static construct
+    {
+      Types.Table.ensure ();
     }
   }
 }

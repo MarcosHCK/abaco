@@ -527,6 +527,13 @@ namespace Abaco
         }
     }
 
+    public void profile ()
+      throws GLib.Error
+    {
+      unowned var root = global.node;
+        Ast.profile (root);
+    }
+
     /* constructors */
 
     construct
