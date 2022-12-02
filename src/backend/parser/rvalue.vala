@@ -43,7 +43,7 @@ namespace Abaco.Parse
     unowned var name = walker.pop_identifier ();
     unowned var sep = walker.pop_separator ("=");
     unowned var target = lookup_variable<Variable> (name, space);
-      var rvalue = parse_rvalue (walker, space);
+      var rvalue = parse_rvalue (walker, space, sep);
       var assign = new Ast.Assign (target, rvalue);
       annotate_location (assign, name, walker.source);
   return assign;
@@ -56,10 +56,21 @@ namespace Abaco.Parse
     unowned var sep = walker.pop_separator ("(");
     unowned var target = lookup_variable<Function> (name, space);
     unowned var token = (Token?) null;
-    unowned var lastp = (Token?) null;
+    unowned var last = (Token?) null;
       var list = new Ast.List<IRValue> ();
       var queue = new Queue<unowned Token?> ();
       var balance = (int) 0;
+
+    if ((token = walker.peek ()) != null
+      && (token.type == TokenType.SEPARATOR
+        && token.value == ")"))
+    {
+      walker.pop ();
+
+      var call = new Ast.Invoke (target, list);
+      annotate_location (call, name, walker.source);
+        return call;
+    }
 
     while ((token = walker.pop ()) != null)
     {
@@ -81,13 +92,12 @@ namespace Abaco.Parse
                 walker2.source = walker.source;
                 walker2.last = queue.peek_tail ();
                 walker2.scanning = walker.scanning;
-              var rvalue = parse_rvalue (walker2, space);
+              var rvalue = parse_rvalue (walker2, space, token);
                 list.append ((owned) rvalue);
                 queue.clear ();
             }
             break;
           case (unichar) '(':
-            lastp = token;
             ++balance;
             break;
           case (unichar) ')':
@@ -102,15 +112,15 @@ namespace Abaco.Parse
               }
               else
               {
-
                 var walker2 = Walker ();
                   walker2.tokens = queue;
                   walker2.source = walker.source;
                   walker2.last = queue.peek_tail ();
                   walker2.scanning = walker.scanning;
-                var rvalue = parse_rvalue (walker2, space);
+                var rvalue = parse_rvalue (walker2, space, token);
                   list.append ((owned) rvalue);
                   queue.clear ();
+
                 var call = new Ast.Invoke (target, list);
                   annotate_location (call, name, walker.source);
                   return call;
@@ -122,6 +132,7 @@ namespace Abaco.Parse
       }
 
       queue.push_tail (token);
+      last = token;
     }
 
     if (balance > 0)
@@ -172,7 +183,7 @@ namespace Abaco.Parse
     }
   }
 
-  internal static IRValue parse_rvalue (Walker? walker, Space? space, bool embedded = false)
+  internal static IRValue parse_rvalue (Walker? walker, Space? space, Token? begin, bool embedded = false)
     throws GLib.Error
   {
     var rvalues = new Queue<IRValue> ();
@@ -239,7 +250,7 @@ namespace Abaco.Parse
                         unowned var sep1 = operators.pop_head ();
                         assert (sep1.type == TokenType.SEPARATOR);
 
-                        rvalue = parse_rvalue (walker, space, true);
+                        rvalue = parse_rvalue (walker, space, next, true);
                         rvalue = new Ast.Cast (value, rvalue);
                         annotate_location (rvalue, token, walker.source);
                         rvalues.push_head (rvalue);
@@ -249,7 +260,7 @@ namespace Abaco.Parse
                   case (unichar) '=':
                     {
                       walker.pop ();
-                      rvalue = parse_rvalue (walker, space, true);
+                      rvalue = parse_rvalue (walker, space, next, true);
                       rvalues.push_head (rvalue);
                     }
                     break;
@@ -385,7 +396,12 @@ namespace Abaco.Parse
       }
     }
 
-    assert (rvalues.length != 0);
+    if (rvalues.length < 1)
+    {
+      var locate = ParserError.locate (begin);
+      var message = @"$(locate): Expected rvalue";
+      throw new ParserError.FAILED (message);
+    }
 
     if (rvalues.length > 1)
     {

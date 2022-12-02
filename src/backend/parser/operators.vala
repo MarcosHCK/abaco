@@ -19,55 +19,19 @@ using Abaco.Ast;
 
 namespace Abaco
 {
-  internal abstract class Operators
-  {
-    static HashTable<unowned string, unowned Operator?> links;
-    static Operator[] operators;
-
-    /* public API */
-
-    public static unowned Operator? lookup (string name)
-    {
-      unowned Operator? val;
-      if (links.lookup_extended (name, null, out val))
-        return val;
-      assert_not_reached ();
-    }
-
-    /* constructor */
-
-    static construct
-    {
-      operators =
-      new Operator[]
-      {
-        Operator.binary ("+", 2, Assoc.LEFT),
-        Operator.binary ("-", 2, Assoc.LEFT),
-        Operator.binary ("*", 3, Assoc.LEFT),
-        Operator.binary ("/", 3, Assoc.LEFT),
-      };
-
-      unowned var hash = GLib.str_hash;
-      unowned var equal = GLib.str_equal;
-      links = new HashTable<unowned string, unowned Operator?> (hash, equal);
-
-      foreach (unowned var val in operators)
-        links.insert (val.name, val);
-    }
-  }
-
   internal enum Assoc
   {
     LEFT = 0,
     RIGHT = 1,
   }
 
-  internal struct Operator
+  [Compact (opaque = true)]
+  internal class Operator
   {
-    public string name;
-    public uint precedence;
-    public Assoc assoc;
-    public bool is_unary;
+    public string name { get; private set; }
+    public uint precedence { get; private set; }
+    public bool is_unary { get; private set; }
+    public Assoc assoc { get; private set; }
 
     /* constructor */
 
@@ -88,6 +52,47 @@ namespace Abaco
     {
       this.name = name;
       this.precedence = precedence;
+    }
+  }
+
+  [Compact (opaque = true)]
+  internal class Operators : HashTable<string, Operator?>
+  {
+    private static Operators global;
+
+    /* public API */
+
+    public static void ensure ()
+    {
+      global = new Operators ();
+      register (new Operator.binary ("+", 2, Assoc.LEFT));
+      register (new Operator.binary ("-", 2, Assoc.LEFT));
+      register (new Operator.binary ("*", 3, Assoc.LEFT));
+      register (new Operator.binary ("/", 3, Assoc.LEFT));
+    }
+
+    public static unowned Operator? register (owned Operator? op)
+    {
+      unowned var name = op.name;
+      global.insert (name, (owned) op);
+    return lookup (name);
+    }
+
+    public static unowned Operator? lookup (string name)
+    {
+      unowned Operator? val;
+      if (global.lookup_extended (name, null, out val))
+        return val;
+      assert_not_reached ();
+    }
+
+    /* constructor */
+
+    public Operators ()
+    {
+      unowned var hash = GLib.str_hash;
+      unowned var equal = GLib.str_equal;
+      base (hash, equal);
     }
   }
 }

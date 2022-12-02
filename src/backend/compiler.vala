@@ -121,6 +121,7 @@ namespace Abaco
     static construct
     {
       Types.Table.ensure ();
+      Operators.ensure ();
     }
   }
 }

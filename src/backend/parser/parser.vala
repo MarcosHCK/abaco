@@ -240,7 +240,7 @@ namespace Abaco
                     walker2.source = walker.source;
                     walker2.last = queue.peek_tail ();
                     walker2.scanning = walker.scanning;
-                    rvalue = parse_rvalue (walker2, space);
+                    rvalue = parse_rvalue (walker2, space, sep);
                 }
 
                 if (Modifiers.GLOBAL in mods)
@@ -360,7 +360,7 @@ namespace Abaco
           walker2.source = walker.source;
           walker2.last = queue.peek_tail ();
           walker2.scanning = walker.scanning;
-          rvalue = parse_rvalue (walker2, space);
+          rvalue = parse_rvalue (walker2, space, token);
       }
 
       var node = new Ast.Return (rvalue);
@@ -467,9 +467,7 @@ namespace Abaco
                 if (ScopeFlags.STOPS in flg)
                   return;
                 else
-                {
                   throw ParserError.unexpected_token (token);
-                }
                 break;
               default:
                 throw ParserError.unexpected_token (token);
@@ -540,11 +538,6 @@ namespace Abaco
     {
       global = new Space ();
       uniques = Uniques ();
-    }
-
-    static construct
-    {
-      typeof (Operators).class_ref ();
     }
   }
 }
