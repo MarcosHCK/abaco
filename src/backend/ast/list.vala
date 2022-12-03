@@ -50,26 +50,6 @@ namespace Abaco.Ast
       }
     }
 
-    /* debug API */
-
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      var partial = base.debug (spaces);
-      unowned var child = children;
-
-      while (child != null)
-      {
-        var node = (Node) child.data;
-        partial += "\r\n" + node.debug (spaces + 1);
-        child = child.next;
-      }
-    return partial;
-    }
-
-#endif // DEVELOPER
-
     /* public API */
 
     public void append (T child) { children.append (child); }

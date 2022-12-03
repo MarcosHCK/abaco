@@ -35,6 +35,7 @@ ast/assign.c
 ast/cast.c
 ast/concrete.c
 ast/constant.c
+ast/debug.c
 ast/function.c
 ast/global.c
 ast/invoke.c

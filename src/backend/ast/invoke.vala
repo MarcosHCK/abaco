@@ -39,20 +39,6 @@ namespace Abaco.Ast
       }
     }
 
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return
-        base.debug (spaces)
-      + "\r\n"
-      + target.debug (spaces + 1)
-      + "\r\n"
-      + arguments.debug (spaces + 1);
-    }
-
-#endif // DEVELOPER
-
     /* constructors */
 
     public Invoke (IVariable target, List<IRValue> arguments)

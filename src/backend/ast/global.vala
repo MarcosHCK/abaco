@@ -23,21 +23,6 @@ namespace Abaco.Ast
     public bool is_constant { get; private set; }
     public IRValue? rvalue { get; private set; }
 
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return
-        base.debug (spaces)
-      +
-        ((rvalue == null)
-      ? ""
-      : "\r\n"
-      + rvalue.debug (spaces + 1));
-    }
-
-#endif // DEVELOPER
-
     /* constructors */
 
     public Global (string id, string typename, bool is_constant, IRValue? rvalue)

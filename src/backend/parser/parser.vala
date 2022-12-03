@@ -515,7 +515,7 @@ namespace Abaco
         try
         {
           walk_scope (walker, global, ScopeFlags.NONE);
-          print ("%s\r\n\r\n", global.node.debug (0));
+          print ("%s\r\n\r\n", Ast.debug (global.node));
         }
         catch (ParserError e)
         {

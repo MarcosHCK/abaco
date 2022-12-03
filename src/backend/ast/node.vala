@@ -44,19 +44,6 @@ namespace Abaco.Ast
       }
     }
 
-    /* debug API */
-
-#if DEVELOPER == 1
-
-    public virtual string debug (size_t spaces)
-    {
-      var type = Type.from_instance (this);
-      var pre = string.nfill (spaces * 2, ' ');
-      return ("%s- '%s'").printf (pre, type.name ());
-    }
-
-#endif // DEVELOPER
-
     /* public API */
 
     public void set_note (string index, string content) { notes.set_data (index, content); }

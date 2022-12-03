@@ -35,20 +35,6 @@ namespace Abaco.Ast
       }
     }
 
-    /* debug API */
-
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return ("%s, type '%s', value '%s'").printf
-        (base.debug (spaces),
-         typename ?? "(unassigned)",
-          value);
-    }
-
-#endif // DEVELOPER
-
     /* constructors */
 
     public Constant (string value)

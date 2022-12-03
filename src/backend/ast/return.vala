@@ -22,18 +22,6 @@ namespace Abaco.Ast
   {
     public IRValue? rvalue { get; private set; }
 
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return
-        base.debug (spaces)
-      + "\r\n"
-      + rvalue.debug (spaces + 1);
-    }
-
-#endif // DEVELOPER
-
     /* constructors */
 
     public Return (IRValue? rvalue)

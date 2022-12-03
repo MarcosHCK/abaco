@@ -88,6 +88,12 @@ libabaco_la_LDFLAGS=\
   -version-info 0:0:0 \
   $(VOID)
 
+if DEVELOPER
+  libabaco_la_SOURCES+=\
+    ast/debug.vala
+    $(VOID)
+endif
+
 #
 # Vala
 #

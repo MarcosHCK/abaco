@@ -36,18 +36,6 @@ namespace Abaco.Ast
       }
     }
 
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return
-        ("%s, name '%s'").printf (base.debug (spaces), name)
-      + "\r\n"
-      + rvalues.debug (spaces + 1);
-    }
-
-#endif // DEVELOPER
-
     /* constructor */
 
     public Operation (string name, List<IRValue> rvalues)

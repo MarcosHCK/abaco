@@ -25,20 +25,6 @@ namespace Abaco.Ast
     public string typename { get; private set; }
     public List<IVariable> arguments { get; private set; }
 
-    /* debug API */
-
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return
-        ("%s, id '%s', type '%s'").printf (base.debug (spaces), id, typename)
-      + "\r\n"
-      + arguments.debug (spaces + 1);
-    }
-
-#endif // DEVELOPER
-
     /* constructor */
 
     public Function (string id, string return_type, List<IVariable> arguments)
@@ -63,20 +49,6 @@ namespace Abaco.Ast
   internal class ConcreteFunction : Function, IConcrete
   {
     public Scope body { get; private set; }
-
-    /* debug API */
-
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return
-        base.debug (spaces)
-      + "\r\n"
-      + body.debug (spaces + 1);
-    }
-
-#endif // DEVELOPER
 
     /* constructor */
 

@@ -34,7 +34,7 @@ namespace Abaco.Ast
       unowned var column = node.get_qnote (Ast.Node.Annotations.column_number);
       unowned var source = node.get_qnote (Ast.Node.Annotations.source_name);
       if (unlikely (source == null || line == null || column == null))
-        error ("Node isn't annotated\r\n%s\r\n", node.debug (0));
+        error ("Node isn't annotated\r\n%s\r\n", Ast.debug (node));
 
       return @"$(source): $(line): $(column)";
     }

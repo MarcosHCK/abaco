@@ -27,17 +27,6 @@ namespace Abaco.Ast
     public string id { get; private set; }
     public string typename { get; private set; }
 
-    /* debug API */
-
-#if DEVELOPER == 1
-
-    public override string debug (size_t spaces)
-    {
-      return ("%s, id '%s'").printf (base.debug (spaces), id);
-    }
-
-#endif // DEVELOPER
-
     /* constructor */
 
     public Variable (string id, string typename)
