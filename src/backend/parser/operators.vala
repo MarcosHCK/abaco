@@ -78,7 +78,7 @@ namespace Abaco
     return lookup (name);
     }
 
-    public static unowned Operator? lookup (string name)
+    public new static unowned Operator? lookup (string name)
     {
       unowned Operator? val;
       if (global.lookup_extended (name, null, out val))

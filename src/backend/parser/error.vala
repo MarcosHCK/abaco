@@ -26,7 +26,8 @@ namespace Abaco
     UNEXPECTED_TOKEN,
     REDEFINED,
     EXPECTED,
-    INVALID;
+    INVALID,
+    UNKNOWN_TYPE;
 
     /* internal API */
 

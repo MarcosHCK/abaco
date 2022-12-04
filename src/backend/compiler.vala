@@ -20,8 +20,10 @@ namespace Abaco
 {
   public class Compiler : GLib.Object
   {
+    private Types.Table types { get; set; }
     private Lexer lexer { get; set; }
     private Parser parser { get; set; }
+    private Profiler profiler { get; set; }
     private List<Source?> sources;
     private Stage stage;
 
@@ -87,6 +89,7 @@ namespace Abaco
     {
       foreach (unowned var source in sources)
         parser.walk (source.tokens, source.name, true);
+      print ("%s\r\n\r\n", Ast.debug (parser.root));
     }
 
     public void parse_sources () throws GLib.Error
@@ -94,12 +97,14 @@ namespace Abaco
     {
       foreach (unowned var source in sources)
         parser.walk (source.tokens, source.name, false);
+      print ("%s\r\n\r\n", Ast.debug (parser.root));
     }
 
     public void profile () throws GLib.Error
       requires (checkstage (Stage.PARSE, Stage.PARSE))
     {
-      parser.profile ();
+      profiler.profile (parser.root);
+      print ("%s\r\n\r\n", Ast.debug (parser.root));
     }
 
     public void compile () throws GLib.Error
@@ -112,8 +117,10 @@ namespace Abaco
 
     public Compiler ()
     {
+      types = Types.Table.spawn ();
       lexer = new Lexer ();
-      parser = new Parser ();
+      parser = new Parser (types);
+      profiler = new Profiler (types);
       sources = new List<Source> ();
       stage = Stage.FEED;
     }

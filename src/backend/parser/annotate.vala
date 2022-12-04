@@ -18,6 +18,12 @@
 
 namespace Abaco.Parse
 {
+  internal static void annotate_variable (Ast.Node node, Token? name, string source)
+  {
+    annotate_name (node, name);
+    annotate_location (node, name, source);
+  }
+
   internal static void annotate_name (Ast.Node node, Token? token)
   {
     node.set_qnote (Ast.Node.Annotations.name, token.value);
@@ -30,9 +36,8 @@ namespace Abaco.Parse
     node.set_qnote (Ast.Node.Annotations.column_number, token.column.to_string ());
   }
 
-  internal static void annotate_variable (Ast.Node node, Token? name, string source)
+  internal static void annotate_static (Ast.Node node, bool is_static)
   {
-    annotate_name (node, name);
-    annotate_location (node, name, source);
+    node.set_qnote (Ast.Node.Annotations.is_static, is_static ? "true" : null);
   }
 }

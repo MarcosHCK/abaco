@@ -25,6 +25,9 @@ namespace Abaco
     private Uniques uniques;
     private Space global;
 
+    public Types.Table types { get; construct set; }
+    public Scope root { get { return (Scope) global.node; } }
+
     /* type API */
 
     [Flags]
@@ -92,10 +95,18 @@ namespace Abaco
         if (!first) walker.pop_separator (",");
         unowned var type = walker.pop_identifier ();
         unowned var name = walker.pop_identifier ();
-          var id = uniques.next ();
-          var arg = new Ast.Variable (id, type.value);
-            annotate_location (arg, name, walker.source);
-            space.insert (name.value, arg);
+
+        if (types.lookup (type.value) == null)
+        {
+          var locate = ParserError.locate (type);
+          var message = @"Unknown type '$(type.value)'";
+          throw new ParserError.UNKNOWN_TYPE (message);
+        }
+
+        var id = uniques.next ();
+        var arg = new Ast.Variable (id, type.value);
+          annotate_variable (arg, name, walker.source);
+          space.insert (name.value, arg);
       }
     }
 
@@ -135,6 +146,13 @@ namespace Abaco
       unowned var name = walker.pop_identifier ();
       unowned var sep = walker.pop_separator ();
 
+      if (types.lookup (type.value) == null)
+      {
+        var locate = ParserError.locate (type);
+        var message = @"Unknown type '$(type.value)'";
+        throw new ParserError.UNKNOWN_TYPE (message);
+      }
+
       {
         unowned var t = sep.value;
         unowned var c = t.get_char ();
@@ -167,6 +185,7 @@ namespace Abaco
                     var func = new Function (id, type.value, args);
                     unowned var a_func = space.insert (n_func, func);
                       annotate_variable (func, name, walker.source);
+                      annotate_static (func, Modifiers.STATIC in mods);
                   }
                   break;
                 case "{":
@@ -177,6 +196,7 @@ namespace Abaco
                     unowned var a_body = space.insert (n_body, body);
                       ((Ast.Scope) space.node).remove (body);
                       annotate_variable (func, name, walker.source);
+                      annotate_static (func, Modifiers.STATIC in mods);
                     if (walker.scanning == true)
                       skip_function (walker, sep2);
                   }
@@ -263,6 +283,7 @@ namespace Abaco
                 }
 
                 annotate_variable (node, name, walker.source);
+                annotate_static (node, Modifiers.STATIC in mods);
               }
             }
             break;
@@ -512,24 +533,16 @@ namespace Abaco
         walker.last = tokens.peek_tail ();
         walker.scanning = scanning;
 
-        try
-        {
-          walk_scope (walker, global, ScopeFlags.NONE);
-          print ("%s\r\n\r\n", Ast.debug (global.node));
-        }
-        catch (ParserError e)
-        {
-          var r = (Error) e;
-          prefix_error (ref r, @"$(source): ");
+      try
+      {
+        walk_scope (walker, global, ScopeFlags.NONE);
+      }
+      catch (ParserError e)
+      {
+        var r = (Error) e;
+        prefix_error (ref r, @"$(source): ");
           throw r;
-        }
-    }
-
-    public void profile ()
-      throws GLib.Error
-    {
-      unowned var root = global.node;
-        Ast.profile (root);
+      }
     }
 
     /* constructors */
@@ -538,6 +551,11 @@ namespace Abaco
     {
       global = new Space ();
       uniques = Uniques ();
+    }
+
+    public Parser (Types.Table types)
+    {
+      Object (types : types);
     }
   }
 }

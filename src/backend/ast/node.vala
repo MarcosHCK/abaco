@@ -46,8 +46,8 @@ namespace Abaco.Ast
 
     /* public API */
 
-    public void set_note (string index, string content) { notes.set_data (index, content); }
-    public void set_qnote (GLib.Quark index, string content) { notes.id_set_data (index, content); }
+    public void set_note (string index, string? content) { notes.set_data (index, content); }
+    public void set_qnote (GLib.Quark index, string? content) { notes.id_set_data (index, content); }
     public unowned string get_note (string index) { return notes.get_data (index); }
     public unowned string get_qnote (GLib.Quark index) { return notes.id_get_data (index); }
     public string steal_note (string index) { return notes.remove_no_notify (index); }

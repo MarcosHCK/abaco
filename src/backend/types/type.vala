@@ -20,7 +20,7 @@ namespace Abaco.Types
 {
   internal abstract class Type
   {
-    public string typename { get; private set; }
+    public string name { get; private set; }
 
     /* abstract API */
 
@@ -29,43 +29,85 @@ namespace Abaco.Types
 
     /* constructor */
 
-    protected Type (string typename)
+    protected Type (string name)
     {
-      this.typename = typename;
+      this.name = name;
     }
   }
 
-  [Compact (opaque = true)]
-  internal class Table : HashTable<unowned string, Type>
+  internal class ArchInt : Type
   {
+    public override bool checkliteral (string value) { return true; }
+    public override bool checkcast (Type other) { return false; }
+    public ArchInt ()
+    {
+      base ("int");
+    }
+  }
+
+  internal class Integer : Type
+  {
+    public override bool checkliteral (string value) { return true; }
+    public override bool checkcast (Type other) { return false; }
+    public Integer ()
+    {
+      base ("integer");
+    }
+  }
+
+  internal class Table : GLib.Object
+  {
+    private HashTable<unowned string, Type> types;
     static Table? global = null;
 
     /* public API */
 
     public static void ensure ()
     {
-      global = new Table ();
+      if (Once.init_enter ((size_t*) &global))
+      {
+        var table = new Table ();
+        table.register (new ArchInt ());
+        table.register (new Integer ());
+        Once.init_leave ((size_t*) &global, (size_t) table.@ref ());
+      }
     }
 
-    public static void register (Type type)
+    public static Table spawn ()
       requires (global != null)
     {
-      global.insert (type.typename, type);
+      var table = new Table ();
+      var iter = HashTableIter<unowned string, Type> (global.types);
+      unowned var name = (string?) null;
+      unowned var type = (Type?) null;
+
+      while (iter.next (out name, out type))
+        table.register (type);
+    return table;
     }
 
-    public static Type? lookup (string name)
-      requires (global != null)
+    public void register (Type type)
     {
-      assert_not_reached ();
+      types.insert (type.name, type);
+    }
+
+    public unowned Type? lookup (string name)
+    {
+      return types.lookup (name);
     }
 
     /* constructor */
 
     public Table ()
     {
+      Object ();
+    }
+
+    construct
+    {
       unowned var hash = GLib.str_hash;
       unowned var equal = GLib.str_equal;
-      base (hash, equal);
+      types = new HashTable<unowned string, Type> (hash, equal);
     }
   }
 }
