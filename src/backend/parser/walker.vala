@@ -103,7 +103,7 @@ namespace Abaco
       }
     }
 
-    public Queue<unowned Token?> collect (string terminator)
+    public Queue<unowned Token?> collect (string terminator, bool addlast = false)
       throws GLib.Error
     {
       var queue = new Queue<unowned Token?> ();
@@ -116,9 +116,11 @@ namespace Abaco
           throw ParserError.expected_token_eof (last, terminator);
         }
 
-        if (next.type == TokenType.SEPARATOR)
+        if (next.type == TokenType.SEPARATOR
+          && terminator == next.value)
         {
-          if (terminator == next.value)
+          if (addlast == true)
+            queue.push_tail (next);
             break;
         }
 

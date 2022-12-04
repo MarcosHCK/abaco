@@ -58,15 +58,10 @@ namespace Abaco
     public unowned Space? insert (string name, owned Ast.Node child)
       throws GLib.Error
     {
-      if (lookup (name) == null)
+      if (lookup_local (name) == null)
         return push (name, (owned) child);
       else
-      {
-        var locate1 = @"$(child.get_qnote (Ast.Node.Annotations.line_number)): $(child.get_qnote (Ast.Node.Annotations.column_number))";
-        var locate2 = @"$(child.get_qnote (Ast.Node.Annotations.line_number)): $(child.get_qnote (Ast.Node.Annotations.column_number))";
-        var message = @"$(locate1): Redefined symbol '$(name)', previously defined at '$(locate2)'";
-        throw new ParserError.REDEFINED (message);
-      }
+        error ("Already exists a '%s'", name);
     }
 
     public unowned Space? lookup_local (string name)

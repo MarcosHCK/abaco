@@ -25,6 +25,24 @@ namespace Abaco.Ast
     public string typename { get; private set; }
     public List<IVariable> arguments { get; private set; }
 
+    /* public API */
+
+    public void gen_typename ()
+    {
+      typename = return_type + "@";
+      var first = true;
+      foreach (unowned var arg in arguments)
+      {
+        if (!first)
+          typename += "&" + arg.typename;
+        else
+        {
+          typename += arg.typename;
+          first = false;
+        }
+      }
+    }
+
     /* constructor */
 
     public Function (string id, string return_type, List<IVariable> arguments)
@@ -33,16 +51,7 @@ namespace Abaco.Ast
       this.id = id;
       this.return_type = return_type;
       this.arguments = arguments;
-
-      typename = return_type + "@";
-      var first = true;
-      foreach (unowned var arg in arguments)
-      {
-        if (!first)
-          typename += "&" + arg.typename;
-        else
-          typename += arg.typename;
-      }
+        gen_typename ();
     }
   }
 

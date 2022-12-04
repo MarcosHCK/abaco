@@ -121,7 +121,7 @@ namespace Abaco
       }
       else
       {
-        var queue = walker.collect (";");
+        var queue = walker.collect (";", true);
         var walker2 = Walker ();
           walker2.tokens = queue;
           walker2.source = walker.source;
@@ -262,6 +262,8 @@ namespace Abaco
                   {
                     var func = new Function (id, type.value, args);
                     unowned var a_func = space.insert (n_func, func);
+                    unowned var a_args = space.insert (n_args, args);
+                      ((Ast.Scope) space.node).remove (args);
                       annotate_variable (func, name, walker.source);
                       annotate_static (func, Modifiers.STATIC in mods);
                   }
@@ -271,6 +273,8 @@ namespace Abaco
                     var body = new Ast.Scope ();
                     var func = new ConcreteFunction (id, type.value, args, body);
                     unowned var a_func = space.insert (n_func, func);
+                    unowned var a_args = space.insert (n_args, args);
+                      ((Ast.Scope) space.node).remove (args);
                     unowned var a_body = space.insert (n_body, body);
                       ((Ast.Scope) space.node).remove (body);
                       annotate_variable (func, name, walker.source);
@@ -283,12 +287,13 @@ namespace Abaco
                   throw ParserError.unexpected_token (sep2);
                 }
               }
-              else
+
+              if (walker.scanning == false)
               {
                 unowned var a_func = space.lookup (n_func);
                 unowned var a_args = space.lookup (n_args);
                 unowned var a_body = space.lookup (n_body);
-                assert (n_func != null && n_args != null);
+                assert (a_func != null || a_args != null);
 
                 var walker2 = Walker ();
                   walker2.tokens = queue;
@@ -296,12 +301,21 @@ namespace Abaco
                   walker2.last = queue.peek_tail ();
                   walker2.scanning = walker.scanning;
                   walk_arglist (walker2, a_args);
+                ((Function) a_func.node).gen_typename ();
                 if (a_body == null)
                   assert (a_func.node is Function);
                 else
                 {
-                  var flags = ScopeFlags.INNER | ScopeFlags.STOPS;
+                  var args = (Ast.List<IVariable>) a_args.node;
+                  foreach (unowned var arg in args)
+                  {
+                    var qid = Ast.Node.Annotations.name;
+                    var name2 = arg.get_qnote (qid);
+                      space.insert (name2, arg);
+                  }
+
                   assert (a_func.node is ConcreteFunction);
+                  var flags = ScopeFlags.INNER | ScopeFlags.STOPS;
                   walk_scope (walker, a_body, flags, sep2);
                 }
               }
