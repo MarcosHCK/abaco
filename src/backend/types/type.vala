@@ -35,26 +35,6 @@ namespace Abaco.Types
     }
   }
 
-  internal class ArchInt : Type
-  {
-    public override bool checkliteral (string value) { return true; }
-    public override bool checkcast (Type other) { return false; }
-    public ArchInt ()
-    {
-      base ("int");
-    }
-  }
-
-  internal class Integer : Type
-  {
-    public override bool checkliteral (string value) { return true; }
-    public override bool checkcast (Type other) { return false; }
-    public Integer ()
-    {
-      base ("integer");
-    }
-  }
-
   internal class Table : GLib.Object
   {
     private HashTable<unowned string, Type> types;
@@ -67,8 +47,13 @@ namespace Abaco.Types
       if (Once.init_enter ((size_t*) &global))
       {
         var table = new Table ();
+        table.register (new IndpVoid ());
         table.register (new ArchInt ());
-        table.register (new Integer ());
+        table.register (new ArchUint ());
+        table.register (new BigInteger ());
+        table.register (new BigRational ());
+        table.register (new BigReal ());
+
         Once.init_leave ((size_t*) &global, (size_t) table.@ref ());
       }
     }

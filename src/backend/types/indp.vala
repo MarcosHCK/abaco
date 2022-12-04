@@ -18,14 +18,14 @@
 
 namespace Abaco.Types
 {
-  internal static bool is_special (string typename)
+  internal class IndpVoid : Type
   {
-    return typename.get_char () == (unichar) '$';
-  }
+    public override bool checkliteral (string value) { return false; }
+    public override bool checkcast (Type other) { return false; }
 
-  internal static unowned string? get_special (string typename)
-    requires (is_special (typename))
-  {
-    return typename.next_char ();
+    public IndpVoid ()
+    {
+      base ("void");
+    }
   }
 }

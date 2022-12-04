@@ -69,7 +69,9 @@ libabaco_la_SOURCES=\
   parser/space.vala \
   parser/unique.vala \
   parser/walker.vala \
-  types/checks.vala \
+  types/arch.vala \
+  types/bigint.vala \
+  types/indp.vala \
   types/type.vala \
   compiler.vala \
   $(VOID)

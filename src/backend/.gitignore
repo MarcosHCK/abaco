@@ -66,6 +66,8 @@ parser/rvalue.c
 parser/space.c
 parser/unique.c
 parser/walker.c
-types/checks.c
+types/arch.c
+types/bigint.c
+types/indp.c
 types/type.c
 compiler.c
