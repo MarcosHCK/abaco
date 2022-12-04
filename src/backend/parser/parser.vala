@@ -110,6 +110,84 @@ namespace Abaco
       }
     }
 
+    private void walk_condblock (Walker? walker, Space? space)
+      throws GLib.Error
+    {
+      if (walker.check_separator ("{"))
+      {
+        var sep = walker.pop_separator ("{");
+        var flags = ScopeFlags.INNER | ScopeFlags.STOPS;
+        walk_scope (walker, space, flags, sep);
+      }
+      else
+      {
+        var queue = walker.collect (";");
+        var walker2 = Walker ();
+          walker2.tokens = queue;
+          walker2.source = walker.source;
+          walker2.last = queue.peek_tail ();
+          walker2.scanning = walker.scanning;
+
+        var flags = ScopeFlags.INNER;
+        walk_scope (walker2, space, flags);
+      }
+    }
+
+    private void walk_conditional (Walker? walker, Space? space, Token? begin)
+      throws GLib.Error
+    {
+      unowned var sep = walker.pop_separator ("(");
+
+      var queue = walker.collect (")");
+      var walker2 = Walker ();
+        walker2.tokens = queue;
+        walker2.source = walker.source;
+        walker2.last = queue.peek_tail ();
+        walker2.scanning = walker.scanning;
+      var rvalue = parse_rvalue (walker2, space, sep);
+      var n_cond = @"$(begin.value)@($(begin.line).$(begin.column))";
+      var n_direct = @"direct@($(begin.line).$(begin.column))";
+      var n_reverse = @"reverse@($(begin.line).$(begin.column))";
+
+      switch (begin.value)
+      {
+      default:
+        error ("Fix this! (%s)", begin.value);
+      case "if":
+        {
+          var direct = new Scope ();
+          var reverse = new Scope ();
+
+          var cond = new Ifelse (rvalue, direct, reverse);
+            space.insert (n_cond, cond);
+          var s_direct = space.insert (n_direct, direct);
+            ((Scope) space.node).remove (direct);
+          var s_reverse = space.insert (n_reverse, reverse);
+            ((Scope) space.node).remove (reverse);
+
+          walk_condblock (walker, s_direct);
+          if (walker.check_keyword ("else"))
+          {
+            var next = walker.pop ();
+            walk_condblock (walker, s_reverse);
+          }
+        }
+        break;
+      case "while":
+        {
+          var direct = new Scope ();
+
+          var cond = new While (rvalue, direct);
+            space.insert (n_cond, cond);
+          var s_direct = space.insert (n_direct, direct);
+            ((Scope) space.node).remove (direct);
+
+          walk_condblock (walker, s_direct);
+        }
+        break;
+      }
+    }
+
     private bool check_declaration (Walker? walker, Space? space, Modifiers mods, Token? token)
       throws GLib.Error
     {
@@ -431,6 +509,12 @@ namespace Abaco
                     mods |= Modifiers.CONSTANT;
                 }
               }
+              break;
+            case "if":
+              if (! (ScopeFlags.INNER in flg))
+                throw ParserError.unexpected_token (token);
+              else
+                walk_conditional (walker, space, token);
               break;
             case "namespace":
               if (ScopeFlags.INNER in flg)

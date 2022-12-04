@@ -64,7 +64,42 @@ namespace Abaco
         if (type != TokenType.KEYWORD)
           return false;
         else
-          return true;
+        {
+          if (specific == null)
+            return true;
+          else
+          {
+            if (specific != next.value)
+              return false;
+            else
+              return true;
+          }
+        }
+      }
+    }
+
+    public bool check_separator (string? specific = null)
+    {
+      unowned var next = peek ();
+      if (next == null)
+        return false;
+      else
+      {
+        var type = next.type;
+        if (type != TokenType.SEPARATOR)
+          return false;
+        else
+        {
+          if (specific == null)
+            return true;
+          else
+          {
+            if (specific != next.value)
+              return false;
+            else
+              return true;
+          }
+        }
       }
     }
 

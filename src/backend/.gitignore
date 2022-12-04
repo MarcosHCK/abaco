@@ -34,10 +34,12 @@ asm/builder.c
 ast/assign.c
 ast/cast.c
 ast/concrete.c
+ast/conditional.c
 ast/constant.c
 ast/debug.c
 ast/function.c
 ast/global.c
+ast/ifelse.c
 ast/invoke.c
 ast/list.c
 ast/named.c
@@ -50,6 +52,7 @@ ast/scope.c
 ast/typed.c
 ast/unique.c
 ast/variable.c
+ast/while.c
 lexer/lexer.c
 lexer/token.c
 lexer/tokenclass.c

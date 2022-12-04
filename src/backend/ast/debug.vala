@@ -70,6 +70,22 @@ namespace Abaco.Ast
         builder.append ("\r\n");
         debug_node (builder, visited, rvalue, spaces + 1);
       } else
+      if (node is Conditional)
+      {
+        unowned var node_ = (Conditional) node;
+        unowned var direct = node_.direct;
+
+        builder.append ("\r\n");
+        debug_node (builder, visited, direct, spaces + 1);
+        if (node is Ifelse)
+        {
+          unowned var node__ = (Ifelse) node;
+          unowned var reverse = node__.reverse;
+
+          builder.append ("\r\n");
+          debug_node (builder, visited, reverse, spaces + 1);
+        }
+      } else
       if (node is Function)
       {
         unowned var node_ = (Function) node;

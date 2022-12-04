@@ -39,9 +39,11 @@ libabaco_la_SOURCES=\
   ast/assign.vala \
   ast/cast.vala \
   ast/concrete.vala \
+  ast/conditional.vala \
   ast/constant.vala \
   ast/function.vala \
   ast/global.vala \
+  ast/ifelse.vala \
   ast/invoke.vala \
   ast/list.vala \
   ast/node.vala \
@@ -53,6 +55,7 @@ libabaco_la_SOURCES=\
   ast/typed.vala \
   ast/unique.vala \
   ast/variable.vala \
+  ast/while.vala \
   lexer/lexer.vala \
   lexer/token.vala \
   lexer/tokenclass.vala \

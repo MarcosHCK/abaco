@@ -189,6 +189,19 @@ namespace Abaco
         unowned var rvalue = node_.rvalue;
         profile_rvalue (rvalue, target.typename);
       } else
+      if (node is Conditional)
+      {
+        unowned var node_ = (Conditional) node;
+        unowned var direct = node_.direct;
+        profile_types (direct, function);
+
+        if (node is Ifelse)
+        {
+          unowned var node__ = (Ifelse) node;
+          unowned var reverse = node__.reverse;
+          profile_types (reverse, function);
+        }
+      } else
       if (node is Function)
       {
         unowned var node_ = (Function) node;
@@ -297,6 +310,24 @@ namespace Abaco
       if (node is Return)
         return true;
       else
+      if (node is Ifelse)
+      {
+        unowned var node_ = (Ifelse) node;
+        unowned var direct = node_.direct;
+        unowned var reverse = node_.reverse;
+
+        if (profile_path (direct)
+          && profile_path (reverse))
+          return true;
+      } else
+      if (node is While)
+      {
+        unowned var node_ = (While) node;
+        unowned var direct = node_.direct;
+
+        if (profile_path (direct))
+          return true;
+      } else
       if (node is Scope)
       {
         foreach (unowned var node_ in (Scope) node)
