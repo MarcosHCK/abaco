@@ -37,40 +37,28 @@ namespace Abaco.Parse
   return (T) down.node;
   }
 
-  internal static IRValue parse_assign (Walker? walker, Space? space)
+  internal static IRValue parse_assign (Walker? walker, Space? space, bool embedded = false)
     throws GLib.Error
   {
     unowned var name = walker.pop_identifier ();
     unowned var sep = walker.pop_separator ("=");
     unowned var target = lookup_variable<Variable> (name, space);
-      var rvalue = parse_rvalue (walker, space, sep);
+      var rvalue = parse_rvalue (walker, space, sep, embedded);
       var assign = new Ast.Assign (target, rvalue);
       annotate_location (assign, name, walker.source);
   return assign;
   }
 
-  internal static IRValue parse_invoke (Walker? walker, Space? space)
+  internal static IRValue parse_invoke (Walker? walker, Space? space, bool embedded = false)
     throws GLib.Error
   {
     unowned var name = walker.pop_identifier ();
     unowned var sep = walker.pop_separator ("(");
     unowned var target = lookup_variable<Function> (name, space);
     unowned var token = (Token?) null;
-    unowned var last = (Token?) null;
       var list = new Ast.List<IRValue> ();
       var queue = new Queue<unowned Token?> ();
       var balance = (int) 0;
-
-    if ((token = walker.peek ()) != null
-      && (token.type == TokenType.SEPARATOR
-        && token.value == ")"))
-    {
-      walker.pop ();
-
-      var call = new Ast.Invoke (target, list);
-      annotate_location (call, name, walker.source);
-        return call;
-    }
 
     while ((token = walker.pop ()) != null)
     {
@@ -92,9 +80,11 @@ namespace Abaco.Parse
                 walker2.source = walker.source;
                 walker2.last = queue.peek_tail ();
                 walker2.scanning = walker.scanning;
-              var rvalue = parse_rvalue (walker2, space, token);
+              var rvalue = parse_rvalue (walker2, space, sep);
                 list.append ((owned) rvalue);
                 queue.clear ();
+                sep = token;
+              continue;
             }
             break;
           case (unichar) '(':
@@ -104,7 +94,7 @@ namespace Abaco.Parse
             --balance;
             if (balance == -1)
             {
-              if (!walker.is_empty)
+              if (!walker.is_empty && !embedded)
               {
                 var locate = ParserError.locate (token);
                 var message = @"$(locate): Unbalanced ')'";
@@ -132,7 +122,6 @@ namespace Abaco.Parse
       }
 
       queue.push_tail (token);
-      last = token;
     }
 
     if (balance > 0)
@@ -226,22 +215,24 @@ namespace Abaco.Parse
                 {
                   switch (c)
                   {
+                  case (unichar) '=':
+                    {
+                      walker.push (token);
+                      rvalue = parse_assign (walker, space, true);
+                      rvalues.push_head (rvalue);
+                    }
+                    break;
                   case (unichar) '(':
                     {
-                      walker.pop ();
-                      var queue = walker.collect (")");
-                      var walker2 = Walker ();
-                        walker2.tokens = queue;
-                        walker2.source = walker.source;
-                        walker2.last = queue.peek_tail ();
-                        walker2.scanning = walker.scanning;
-                        rvalue = parse_invoke (walker2, space);
-                        rvalues.push_head (rvalue);
+                      walker.push (token);
+                      rvalue = parse_invoke (walker, space, true);
+                      rvalues.push_head (rvalue);
                     }
                     break;
                   case (unichar) ')':
                     {
-                      if (last.type != TokenType.SEPARATOR
+                      if ( last == null
+                        || last.type != TokenType.SEPARATOR
                         || last.value != "(")
                         pushvar (rvalues, space, token);
                       else
@@ -255,13 +246,6 @@ namespace Abaco.Parse
                         annotate_location (rvalue, token, walker.source);
                         rvalues.push_head (rvalue);
                       }
-                    }
-                    break;
-                  case (unichar) '=':
-                    {
-                      walker.pop ();
-                      rvalue = parse_rvalue (walker, space, next, true);
-                      rvalues.push_head (rvalue);
                     }
                     break;
                   default:

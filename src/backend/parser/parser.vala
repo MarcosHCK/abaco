@@ -107,6 +107,7 @@ namespace Abaco
         var arg = new Ast.Variable (id, type.value);
           annotate_variable (arg, name, walker.source);
           space.insert (name.value, arg);
+          first = false;
       }
     }
 
@@ -311,7 +312,7 @@ namespace Abaco
                   {
                     var qid = Ast.Node.Annotations.name;
                     var name2 = arg.get_qnote (qid);
-                      space.insert (name2, arg);
+                      a_body.insert (name2, arg);
                   }
 
                   assert (a_func.node is ConcreteFunction);

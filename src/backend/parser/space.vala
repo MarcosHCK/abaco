@@ -44,7 +44,7 @@ namespace Abaco
         throw new ParserError.FAILED ("invalid operation");
       else
       {
-        unowned var scope = (Ast.Scope) node;
+        unowned var scope = (Ast.List<Ast.Node>) node;
         unowned var space = (Space?) null;
           var SPACE = new Space.spawn ((owned) child);
 

@@ -35,6 +35,7 @@ namespace Abaco
 
     /* public API */
 
+    public unowned void push (Token? token) { tokens.push_head (token); }
     public unowned Token? peek () { return tokens.peek_head (); }
     public unowned Token? pop () { return tokens.pop_head (); }
 
