@@ -86,6 +86,14 @@ namespace Abaco.Ast
           debug_node (builder, visited, reverse, spaces + 1);
         }
       } else
+      if (node is Constant)
+      {
+        unowned var node_ = (Constant) node;
+        builder.append (", ");
+        builder.append ("value = '");
+        builder.append (node_.value);
+        builder.append_c ('\'');
+      } else
       if (node is Function)
       {
         unowned var node_ = (Function) node;
